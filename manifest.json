@@ -1,6 +1,6 @@
 {
   "name": "Gestion Cheptel Pro",
-  "short_name": "Cheptel Pro",
+  "short_name": "Cheptel Pro", 
   "description": "Application de gestion de cheptel moderne et professionnelle pour éleveurs",
   "start_url": "/",
   "display": "standalone",
@@ -12,27 +12,27 @@
   "categories": ["productivity", "business"],
   "icons": [
     {
-      "src": "https://via.placeholder.com/192x192/2563eb/ffffff?text=CP",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://via.placeholder.com/192x192/2563eb/ffffff?text=CP",
-      "sizes": "192x192", 
+      "src": "icon-192.png", 
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://via.placeholder.com/512x512/2563eb/ffffff?text=CP",
-      "sizes": "512x512",
+      "src": "icon-512.png",
+      "sizes": "512x512", 
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://via.placeholder.com/512x512/2563eb/ffffff?text=CP",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png", 
+      "type": "image/png",
       "purpose": "maskable"
     }
   ]
