@@ -1,0 +1,43 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond bleu -->
+  <rect width="192" height="192" fill="#2563eb" rx="24"/>
+  
+  <!-- Bordure -->
+  <rect x="8" y="8" width="176" height="176" fill="none" stroke="#ffffff" stroke-width="2" rx="20"/>
+  
+  <!-- Icône de mouton stylisée -->
+  <g transform="translate(96,96)">
+    <!-- Corps du mouton -->
+    <circle cx="0" cy="10" r="35" fill="#ffffff"/>
+    
+    <!-- Tête du mouton -->
+    <circle cx="0" cy="-20" r="25" fill="#ffffff"/>
+    
+    <!-- Oreilles -->
+    <ellipse cx="-18" cy="-28" rx="8" ry="12" fill="#f1f5f9"/>
+    <ellipse cx="18" cy="-28" rx="8" ry="12" fill="#f1f5f9"/>
+    
+    <!-- Yeux -->
+    <circle cx="-8" cy="-25" r="3" fill="#1e293b"/>
+    <circle cx="8" cy="-25" r="3" fill="#1e293b"/>
+    
+    <!-- Nez -->
+    <ellipse cx="0" cy="-15" rx="4" ry="2" fill="#64748b"/>
+    
+    <!-- Pattes -->
+    <rect x="-20" y="35" width="8" height="20" fill="#64748b" rx="4"/>
+    <rect x="-8" y="35" width="8" height="20" fill="#64748b" rx="4"/>
+    <rect x="4" y="35" width="8" height="20" fill="#64748b" rx="4"/>
+    <rect x="16" y="35" width="8" height="20" fill="#64748b" rx="4"/>
+    
+    <!-- Texture laine -->
+    <circle cx="-15" cy="5" r="8" fill="#f8fafc" opacity="0.7"/>
+    <circle cx="15" cy="5" r="8" fill="#f8fafc" opacity="0.7"/>
+    <circle cx="0" cy="20" r="8" fill="#f8fafc" opacity="0.7"/>
+    <circle cx="-10" cy="-5" r="6" fill="#f8fafc" opacity="0.7"/>
+    <circle cx="10" cy="-5" r="6" fill="#f8fafc" opacity="0.7"/>
+  </g>
+  
+  <!-- Texte CP en bas -->
+  <text x="96" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">CP</text>
+</svg>
