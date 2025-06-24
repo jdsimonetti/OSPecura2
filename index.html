@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#2563eb">
-    <title>OS Pecura</title>
+    <title>Gestion Cheptel Pro</title>
     
     <style>
         * {
@@ -431,8 +431,8 @@
         <div class="header">
             <div class="header-content">
                 <div>
-                    <h1 class="title">Gestion Cheptel Pro</h1>
-                    <p class="subtitle">Version simplifiée et robuste</p>
+                    <h1 class="title">OS Pecura</h1>
+                    <p class="subtitle">Système de gestion de cheptel professionnel</p>
                 </div>
                 <div class="stat-badge">
                     <div class="stat-number" id="totalCount">0</div>
@@ -572,6 +572,11 @@
                         <option value="Bergerie 2">Bergerie 2</option>
                         <option value="Tunnel 1">Tunnel 1</option>
                         <option value="Tunnel 2">Tunnel 2</option>
+                        <option value="Dactyle 1">Dactyle 1</option>
+                        <option value="Dactyle 2">Dactyle 2</option>
+                        <option value="Infirmerie">Infirmerie</option>
+                        <option value="Quarantaine">Quarantaine</option>
+                        <option value="Parc extérieur">Parc extérieur</option>
                     </select>
                 </div>
                 
@@ -604,7 +609,12 @@
                         <option value="Bergerie 2">Bergerie 2</option>
                         <option value="Tunnel 1">Tunnel 1</option>
                         <option value="Tunnel 2">Tunnel 2</option>
-                        <option value="Ensemble">Ensemble</option>
+                        <option value="Dactyle 1">Dactyle 1</option>
+                        <option value="Dactyle 2">Dactyle 2</option>
+                        <option value="Infirmerie">Infirmerie</option>
+                        <option value="Quarantaine">Quarantaine</option>
+                        <option value="Parc extérieur">Parc extérieur</option>
+                        <option value="Ensemble">Ensemble emplacements</option>
                     </select>
                 </div>
                 
@@ -638,21 +648,27 @@
         const sampleAnimals = [
             {id: '001', entryDate: '2024-06-20', birthDate: '2024-03-15', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1'},
             {id: '002', entryDate: '2024-06-21', birthDate: '2024-02-28', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Marie ROSSI', location: 'Bergerie 2'},
-            {id: '003', entryDate: '2024-06-22', birthDate: '2023-04-10', sex: 'Mâle', lot: 'Béliers plus 1 an', breeder: 'Pierre MARTIN', location: 'Tunnel 1'}
+            {id: '003', entryDate: '2024-06-22', birthDate: '2023-04-10', sex: 'Mâle', lot: 'Béliers plus 1 an', breeder: 'Pierre MARTIN', location: 'Tunnel 1'},
+            {id: '004', entryDate: '2024-06-18', birthDate: '2024-01-15', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Paul LECLERC', location: 'Dactyle 1'},
+            {id: '005', entryDate: '2024-06-19', birthDate: '2023-12-20', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Marc DUBOIS', location: 'Dactyle 2'},
+            {id: '006', entryDate: '2024-06-23', birthDate: '2024-04-05', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Sophie BERNARD', location: 'Infirmerie'}
         ];
 
         const sampleFeeding = [
             {id: 1, date: '2024-06-20', location: 'Bergerie 1', hay: 2, feed: 150},
             {id: 2, date: '2024-06-21', location: 'Bergerie 2', hay: 1, feed: 100},
-            {id: 3, date: '2024-06-22', location: 'Ensemble', hay: 3, feed: 250}
+            {id: 3, date: '2024-06-22', location: 'Tunnel 1', hay: 1, feed: 80},
+            {id: 4, date: '2024-06-22', location: 'Dactyle 1', hay: 1, feed: 75},
+            {id: 5, date: '2024-06-23', location: 'Infirmerie', hay: 0, feed: 20},
+            {id: 6, date: '2024-06-23', location: 'Ensemble', hay: 5, feed: 400}
         ];
 
         // SAUVEGARDE SIMPLE
         function saveData() {
             try {
-                console.log('💾 Sauvegarde des données...');
-                localStorage.setItem('cheptel_animals', JSON.stringify(animals));
-                localStorage.setItem('cheptel_feeding', JSON.stringify(feedingRecords));
+                console.log('💾 OS Pecura - Sauvegarde des données...');
+                localStorage.setItem('ospecura_animals', JSON.stringify(animals));
+                localStorage.setItem('ospecura_feeding', JSON.stringify(feedingRecords));
                 console.log('✅ Sauvegarde réussie!', {animaux: animals.length, nutrition: feedingRecords.length});
                 return true;
             } catch (error) {
@@ -665,9 +681,9 @@
         // CHARGEMENT SIMPLE
         function loadData() {
             try {
-                console.log('📂 Chargement des données...');
-                const savedAnimals = localStorage.getItem('cheptel_animals');
-                const savedFeeding = localStorage.getItem('cheptel_feeding');
+                console.log('📂 OS Pecura - Chargement des données...');
+                const savedAnimals = localStorage.getItem('ospecura_animals');
+                const savedFeeding = localStorage.getItem('ospecura_feeding');
                 
                 if (savedAnimals) {
                     animals = JSON.parse(savedAnimals);
@@ -690,11 +706,11 @@
 
         // INITIALISATION
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Démarrage de l\'application...');
+            console.log('🚀 Démarrage OS Pecura...');
             loadData();
             setTodayDate();
             updateDisplay();
-            showNotification('Application prête!', 'success');
+            showNotification('OS Pecura prêt!', 'success');
         });
 
         // DATE DU JOUR
@@ -945,7 +961,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `cheptel_${new Date().toISOString().slice(0,10)}.csv`;
+                a.download = `ospecura_export_${new Date().toISOString().slice(0,10)}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1175,16 +1191,17 @@
         }
 
         // Console commands pour debug
-        window.debugCheptel = {
+        window.osPecura = {
             animals: () => animals,
             feeding: () => feedingRecords,
             save: saveData,
             load: loadData,
             clear: clearAllData,
-            test: testAdd
+            test: testAdd,
+            version: '2.0'
         };
 
-        console.log('🔧 Debug disponible via: window.debugCheptel');
+        console.log('🔧 Debug OS Pecura disponible via: window.osPecura');
     </script>
 </body>
 </html>
