@@ -1,1160 +1,4 @@
-<!-- Vue Nutrition -->
-        <div id="view-feeding" class="hidden">
-            <div class="card">
-                <h2 style="color: #059669; margin-bottom: 8px; font-size: 18px; font-weight: 700;">🌾 Suivi Nutrition</h2>
-                <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">Rations distribuées quotidiennement</p>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="openFeedingModal()">✚ Nouvelle saisie</button>
-                    <button class="btn btn-success" onclick="importFeeding()">⬇ Import données</button>
-                </div>
-            </div>
-            
-            <div id="feeding-container"></div>
-            
-            <div id="empty-feeding" class="empty-state">
-                <div class="empty-icon">🌾</div>
-                <h3 class="empty-title">Aucune donnée nutrition</h3>
-                <p class="empty-text">Ajoutez des enregistrements d'alimentation</p>
-                <button class="btn btn-primary" onclick="openFeedingModal()">✚ Première saisie</button>
-            </div>
-        </div>
-        
-        <!-- Vue Statistiques -->
-        <div id="view-stats" class="hidden">
-            <div class="card">
-                <h2 style="color: #2563eb; margin-bottom: 8px; font-size: 18px; font-weight: 700;">📈 Statistiques</h2>
-                <p style="color: #64748b; font-size: 13px;">Vue d'ensemble de votre cheptel</p>
-            </div>
-            
-            <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;">
-                <div class="stats-card">
-                    <div class="stats-number text-blue" id="stat-total">0</div>
-                    <div class="stats-label">Total</div>
-                </div>
-                <div class="stats-card">
-                    <div class="stats-number text-green" id="stat-present">0</div>
-                    <div class="stats-label">Présents</div>
-                </div>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stats-card">
-                    <div class="stats-number text-red" id="stat-exited">0</div>
-                    <div class="stats-label">Sortis</div>
-                </div>
-                <div class="stats-card">
-                    <div class="stats-number text-blue" id="stat-males">0</div>
-                    <div class="stats-label">Mâles</div>
-                </div>
-                <div class="stats-card">
-                    <div class="stats-number text-purple" id="stat-females">0</div>
-                    <div class="stats-label">Femelles</div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3 style="font-weight: 700; margin-bottom: 12px; color: #1e293b; font-size: 16px;">Répartition par lot</h3>
-                <div id="lots-breakdown"></div>
-            </div>
-            
-            <div class="card">
-                <h3 style="font-weight: 700; margin-bottom: 12px; color: #1e293b; font-size: 16px;">Causes de sortie</h3>
-                <div id="exit-reasons"></div>
-            </div>
-        </div>
-    </div>
-    
-    <button class="fab" onclick="fabAction()">✚</button>
-</div>
-
-<!-- Install Banner -->
-<div id="installBanner" class="install-banner">
-    <div class="install-text">Installer l'application sur votre appareil</div>
-    <button class="install-btn" onclick="installApp()">Installer</button>
-    <button onclick="dismissInstall()" style="background: transparent; border: none; color: white; padding: 8px; cursor: pointer;">✕</button>
-</div>
-
-<!-- Modals -->
-<div id="addModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Ajouter animal</h2>
-            <button class="close-btn" onclick="closeAddModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">ID animal *</label>
-                <input type="text" class="form-input" placeholder="Ex: 001, A123..." id="inputId">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Date d'entrée</label>
-                <input type="date" class="form-input" id="inputDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Date de naissance</label>
-                <input type="date" class="form-input" id="inputBirthDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Nom éleveur</label>
-                <input type="text" class="form-input" placeholder="Ex: Jacques SANTINI" id="inputBreeder">
-            </div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Sexe</label>
-                    <select class="form-select" id="inputSex">
-                        <option value="">Sélectionner</option>
-                        <option value="Mâle">Mâle</option>
-                        <option value="Femelle">Femelle</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Lot *</label>
-                    <select class="form-select" id="inputLot">
-                        <option value="">Sélectionner</option>
-                        <option value="Béliers moins 1 an">Béliers moins 1 an</option>
-                        <option value="Béliers plus 1 an">Béliers plus 1 an</option>
-                        <option value="Agnelles de pensions">Agnelles de pensions</option>
-                        <option value="Béliers adultes de pension">Béliers adultes de pension</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Emplacement *</label>
-                <select class="form-select" id="inputLocation">
-                    <option value="">Sélectionner</option>
-                    <option value="Bergerie 1">Bergerie 1</option>
-                    <option value="Bergerie 2">Bergerie 2</option>
-                    <option value="Tunnel 1">Tunnel 1</option>
-                    <option value="Tunnel 2">Tunnel 2</option>
-                    <option value="Dactyle 1">Dactyle 1</option>
-                    <option value="Dactyle 2">Dactyle 2</option>
-                </select>
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="addAnimal()">Ajouter</button>
-                <button class="btn btn-secondary" onclick="closeAddModal()">Annuler</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="editModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Éditer animal</h2>
-            <button class="close-btn" onclick="closeEditModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">ID animal</label>
-                <input type="text" class="form-input" id="editId" disabled>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Date d'entrée</label>
-                <input type="date" class="form-input" id="editDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Date de naissance</label>
-                <input type="date" class="form-input" id="editBirthDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Nom éleveur</label>
-                <input type="text" class="form-input" id="editBreeder">
-            </div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Sexe</label>
-                    <select class="form-select" id="editSex">
-                        <option value="">Sélectionner</option>
-                        <option value="Mâle">Mâle</option>
-                        <option value="Femelle">Femelle</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Lot *</label>
-                    <select class="form-select" id="editLot">
-                        <option value="">Sélectionner</option>
-                        <option value="Béliers moins 1 an">Béliers moins 1 an</option>
-                        <option value="Béliers plus 1 an">Béliers plus 1 an</option>
-                        <option value="Agnelles de pensions">Agnelles de pensions</option>
-                        <option value="Béliers adultes de pension">Béliers adultes de pension</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Emplacement *</label>
-                <select class="form-select" id="editLocation">
-                    <option value="">Sélectionner</option>
-                    <option value="Bergerie 1">Bergerie 1</option>
-                    <option value="Bergerie 2">Bergerie 2</option>
-                    <option value="Tunnel 1">Tunnel 1</option>
-                    <option value="Tunnel 2">Tunnel 2</option>
-                    <option value="Dactyle 1">Dactyle 1</option>
-                    <option value="Dactyle 2">Dactyle 2</option>
-                </select>
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="saveEditAnimal()">Sauver</button>
-                <button class="btn btn-secondary" onclick="closeEditModal()">Annuler</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="exitModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Sortie animal</h2>
-            <button class="close-btn" onclick="closeExitModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Animal à sortir *</label>
-                <select class="form-select" id="exitAnimalSelect">
-                    <option value="">Sélectionner</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Date sortie *</label>
-                <input type="date" class="form-input" id="exitDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Cause sortie *</label>
-                <select class="form-select" id="exitReason">
-                    <option value="">Sélectionner</option>
-                    <option value="MORT">MORT</option>
-                    <option value="REFORME">RÉFORME</option>
-                    <option value="VENTE">VENTE</option>
-                    <option value="TRANSFERT">TRANSFERT</option>
-                </select>
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn btn-danger" onclick="processExit()">Enregistrer</button>
-                <button class="btn btn-secondary" onclick="closeExitModal()">Annuler</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="feedingModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Saisie nutrition</h2>
-            <button class="close-btn" onclick="closeFeedingModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Date *</label>
-                <input type="date" class="form-input" id="feedingDate">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Emplacement *</label>
-                <select class="form-select" id="feedingLocation">
-                    <option value="">Sélectionner</option>
-                    <option value="Bergerie 1">Bergerie 1</option>
-                    <option value="Bergerie 2">Bergerie 2</option>
-                    <option value="Tunnel 1">Tunnel 1</option>
-                    <option value="Tunnel 2">Tunnel 2</option>
-                    <option value="Ensemble">Ensemble emplacements</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Lot (optionnel)</label>
-                <input type="text" class="form-input" placeholder="Tous lots" id="feedingLot">
-            </div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Foin (bottes)</label>
-                    <input type="number" class="form-input" min="0" value="0" id="feedingHay">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Paille (bottes)</label>
-                    <input type="number" class="form-input" min="0" value="0" id="feedingStraw">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Aliment 1er (kg)</label>
-                    <input type="number" class="form-input" min="0" value="0" id="feedingFeed1">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Aliment 2e (kg)</label>
-                    <input type="number" class="form-input" min="0" value="0" id="feedingFeed2">
-                </div>
-            </div>
-            
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="addFeeding()">Enregistrer</button>
-                <button class="btn btn-secondary" onclick="closeFeedingModal()">Annuler</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Variables globales
-    var animals = [];
-    var feedingRecords = [];
-    var currentView = 'inventory';
-    var currentEditingAnimal = null;
-    var deferredPrompt;
-
-    // Données d'exemple
-    var sampleAnimals = [
-        {id: '001', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1'},
-        {id: '002', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1'},
-        {id: '003', entryDate: '2024-11-13', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Bernard ROSSI', location: 'Bergerie 1'},
-        {id: '004', entryDate: '2024-10-06', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Toussaint CIPRIANI', location: 'Bergerie 2'},
-        {id: '005', entryDate: '2024-10-23', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Jean-Pierre PAOLINI', location: 'Bergerie 2'},
-        {id: '006', entryDate: '2024-10-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Jean MARTIN', location: 'Tunnel 1'},
-        {id: '007', entryDate: '2024-11-02', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Serge MATTEI', location: 'Bergerie 1'},
-        {id: '008', entryDate: '2024-11-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Barthélémy DONATI', location: 'Tunnel 1'}
-    ];
-
-    var sampleFeeding = [
-        {id: 1, date: '2024-10-05', location: 'Ensemble', lot: 'Tous lots', hay: 1, straw: 1, feed1stAge: 200, feed2ndAge: 0},
-        {id: 2, date: '2024-10-06', location: 'Ensemble', lot: 'Tous lots', hay: 1, straw: 0, feed1stAge: 200, feed2ndAge: 0},
-        {id: 3, date: '2024-10-07', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 1, feed1stAge: 200, feed2ndAge: 0},
-        {id: 4, date: '2024-10-08', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 0, feed1stAge: 250, feed2ndAge: 0},
-        {id: 5, date: '2024-10-09', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 0, feed1stAge: 250, feed2ndAge: 0}
-    ];
-
-    // PWA Installation
-    window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallBanner();
-    });
-
-    window.addEventListener('appinstalled', function(e) {
-        hideInstallBanner();
-        showNotification('Application installée avec succès!', 'success');
-    });
-
-    function showInstallBanner() {
-        setTimeout(function() {
-            document.getElementById('installBanner').classList.add('show');
-        }, 3000);
-    }
-
-    function hideInstallBanner() {
-        document.getElementById('installBanner').classList.remove('show');
-    }
-
-    function installApp() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then(function(choiceResult) {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredPrompt = null;
-            });
-        }
-        hideInstallBanner();
-    }
-
-    function dismissInstall() {
-        hideInstallBanner();
-    }
-
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').then(function(registration) {
-                console.log('ServiceWorker registration successful');
-            }, function(err) {
-                console.log('ServiceWorker registration failed: ', err);
-            });
-        });
-    }
-
-    // Initialisation
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            console.log('Démarrage Gestion Cheptel Pro...');
-            loadData();
-            updateDisplay();
-            setTodayDates();
-            showNotification('Application prête', 'success');
-        } catch (error) {
-            console.error('Erreur initialisation:', error);
-            showNotification('Erreur de démarrage', 'error');
-        }
-    });
-
-    function setTodayDates() {
-        try {
-            var today = new Date().toISOString().split('T')[0];
-            var dateInputs = ['inputDate', 'exitDate', 'feedingDate'];
-            dateInputs.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = today;
-            });
-        } catch (error) {
-            console.error('Erreur dates:', error);
-        }
-    }
-
-    function showNotification(message, type) {
-        try {
-            var existingNotification = document.querySelector('.notification');
-            if (existingNotification) {
-                existingNotification.remove();
-            }
-
-            var notification = document.createElement('div');
-            notification.className = 'notification ' + type;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(function() {
-                notification.classList.add('show');
-            }, 100);
-
-            setTimeout(function() {
-                notification.classList.remove('show');
-                setTimeout(function() {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        } catch (error) {
-            console.error('Erreur notification:', error);
-        }
-    }
-
-    // Navigation simplifiée
-    function showView(viewName) {
-        // Mettre à jour la variable globale
-        currentView = viewName;
-        
-        // Retirer la classe active de tous les boutons
-        var buttons = document.querySelectorAll('.nav-btn');
-        buttons.forEach(function(btn) {
-            btn.classList.remove('active');
-        });
-        
-        // Ajouter la classe active au bon bouton
-        if (viewName === 'inventory') {
-            buttons[0].classList.add('active');
-        } else if (viewName === 'feeding') {
-            buttons[1].classList.add('active');
-        } else if (viewName === 'stats') {
-            buttons[2].classList.add('active');
-        }
-        
-        // Masquer toutes les vues
-        document.getElementById('view-inventory').classList.add('hidden');
-        document.getElementById('view-feeding').classList.add('hidden');
-        document.getElementById('view-stats').classList.add('hidden');
-        
-        // Afficher la bonne vue
-        document.getElementById('view-' + viewName).classList.remove('hidden');
-        
-        // Mettre à jour l'affichage
-        updateDisplay();
-    }
-
-    // Garder l'ancienne fonction pour compatibilité
-    function switchView(view) {
-        showView(view);
-    }
-
-    function fabAction() {
-        try {
-            if (currentView === 'inventory') {
-                openAddModal();
-            } else if (currentView === 'feeding') {
-                openFeedingModal();
-            } else {
-                openAddModal();
-            }
-        } catch (error) {
-            console.error('Erreur FAB:', error);
-        }
-    }
-
-    // Gestion des modals
-    function openAddModal() {
-        document.getElementById('addModal').classList.remove('hidden');
-        setTodayDates();
-    }
-
-    function closeAddModal() {
-        document.getElementById('addModal').classList.add('hidden');
-        resetAddForm();
-    }
-
-    function resetAddForm() {
-        try {
-            var inputs = ['inputId', 'inputBreeder'];
-            inputs.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            var selects = ['inputSex', 'inputLot', 'inputLocation'];
-            selects.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            var birthDate = document.getElementById('inputBirthDate');
-            if (birthDate) birthDate.value = '';
-        } catch (error) {
-            console.error('Erreur reset form:', error);
-        }
-    }
-
-    function editAnimal(animalId) {
-        try {
-            var animal = animals.find(function(a) { return a.id === animalId; });
-            if (!animal) {
-                showNotification('Animal non trouvé', 'error');
-                return;
-            }
-            
-            currentEditingAnimal = animalId;
-            
-            document.getElementById('editId').value = animal.id;
-            document.getElementById('editDate').value = animal.entryDate || '';
-            document.getElementById('editBirthDate').value = animal.birthDate || '';
-            document.getElementById('editBreeder').value = animal.breeder || '';
-            document.getElementById('editSex').value = animal.sex || '';
-            document.getElementById('editLot').value = animal.lot || '';
-            document.getElementById('editLocation').value = animal.location || '';
-            
-            document.getElementById('editModal').classList.remove('hidden');
-        } catch (error) {
-            console.error('Erreur édition:', error);
-            showNotification('Erreur ouverture édition', 'error');
-        }
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModal').classList.add('hidden');
-        currentEditingAnimal = null;
-    }
-
-    function saveEditAnimal() {
-        try {
-            if (!currentEditingAnimal) return;
-
-            var animalIndex = animals.findIndex(function(a) { return a.id === currentEditingAnimal; });
-            if (animalIndex === -1) {
-                showNotification('Animal non trouvé', 'error');
-                return;
-            }
-
-            var lot = document.getElementById('editLot').value;
-            var location = document.getElementById('editLocation').value;
-
-            if (!lot || !location) {
-                showNotification('Lot et emplacement obligatoires', 'error');
-                return;
-            }
-
-            animals[animalIndex].entryDate = document.getElementById('editDate').value;
-            animals[animalIndex].birthDate = document.getElementById('editBirthDate').value;
-            animals[animalIndex].breeder = document.getElementById('editBreeder').value.trim();
-            animals[animalIndex].sex = document.getElementById('editSex').value;
-            animals[animalIndex].lot = lot;
-            animals[animalIndex].location = location;
-
-            closeEditModal();
-            updateDisplay();
-            saveData();
-            showNotification('Animal modifié', 'success');
-        } catch (error) {
-            console.error('Erreur sauvegarde:', error);
-            showNotification('Erreur sauvegarde', 'error');
-        }
-    }
-
-    function openExitModal() {
-        updateExitAnimalsList();
-        document.getElementById('exitModal').classList.remove('hidden');
-        setTodayDates();
-    }
-
-    function closeExitModal() {
-        document.getElementById('exitModal').classList.add('hidden');
-    }
-
-    function updateExitAnimalsList() {
-        try {
-            var select = document.getElementById('exitAnimalSelect');
-            if (!select) return;
-
-            var presentAnimals = animals.filter(function(a) { return !a.exitDate; });
-            select.innerHTML = '<option value="">Sélectionner</option>';
-            
-            presentAnimals.forEach(function(animal) {
-                var option = document.createElement('option');
-                option.value = animal.id;
-                option.textContent = animal.id + ' - ' + animal.lot;
-                select.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Erreur liste sortie:', error);
-        }
-    }
-
-    function openFeedingModal() {
-        document.getElementById('feedingModal').classList.remove('hidden');
-        setTodayDates();
-        resetFeedingForm();
-    }
-
-    function closeFeedingModal() {
-        document.getElementById('feedingModal').classList.add('hidden');
-    }
-
-    function resetFeedingForm() {
-        try {
-            var selects = ['feedingLocation'];
-            selects.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            var inputs = ['feedingLot'];
-            inputs.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-            var numbers = ['feedingHay', 'feedingStraw', 'feedingFeed1', 'feedingFeed2'];
-            numbers.forEach(function(id) {
-                var element = document.getElementById(id);
-                if (element) element.value = '0';
-            });
-        } catch (error) {
-            console.error('Erreur reset feeding:', error);
-        }
-    }
-
-    // Actions principales
-    function addAnimal() {
-        try {
-            var id = document.getElementById('inputId').value.trim();
-            var date = document.getElementById('inputDate').value;
-            var birthDate = document.getElementById('inputBirthDate').value;
-            var breeder = document.getElementById('inputBreeder').value.trim();
-            var sex = document.getElementById('inputSex').value;
-            var lot = document.getElementById('inputLot').value;
-            var location = document.getElementById('inputLocation').value;
-
-            if (!id || !lot || !location) {
-                showNotification('ID, lot et emplacement obligatoires', 'error');
-                return;
-            }
-
-            var existingAnimal = animals.find(function(a) { return a.id === id; });
-            if (existingAnimal) {
-                showNotification('ID déjà existant', 'error');
-                return;
-            }
-
-            animals.push({
-                id: id,
-                entryDate: date,
-                birthDate: birthDate,
-                breeder: breeder,
-                sex: sex,
-                lot: lot,
-                location: location
-            });
-            
-            closeAddModal();
-            updateDisplay();
-            saveData();
-            showNotification('Animal ajouté', 'success');
-        } catch (error) {
-            console.error('Erreur ajout:', error);
-            showNotification('Erreur ajout', 'error');
-        }
-    }
-
-    function processExit() {
-        try {
-            var animalId = document.getElementById('exitAnimalSelect').value;
-            var exitDate = document.getElementById('exitDate').value;
-            var exitReason = document.getElementById('exitReason').value;
-
-            if (!animalId || !exitDate || !exitReason) {
-                showNotification('Tous les champs obligatoires', 'error');
-                return;
-            }
-
-            var animalIndex = animals.findIndex(function(a) { return a.id === animalId; });
-            if (animalIndex !== -1) {
-                animals[animalIndex].exitDate = exitDate;
-                animals[animalIndex].exitReason = exitReason;
-                
-                closeExitModal();
-                updateDisplay();
-                saveData();
-                showNotification('Sortie enregistrée', 'success');
-            }
-        } catch (error) {
-            console.error('Erreur sortie:', error);
-            showNotification('Erreur sortie', 'error');
-        }
-    }
-
-    function addFeeding() {
-        try {
-            var date = document.getElementById('feedingDate').value;
-            var location = document.getElementById('feedingLocation').value;
-            var lot = document.getElementById('feedingLot').value.trim();
-            var hay = parseInt(document.getElementById('feedingHay').value) || 0;
-            var straw = parseInt(document.getElementById('feedingStraw').value) || 0;
-            var feed1stAge = parseInt(document.getElementById('feedingFeed1').value) || 0;
-            var feed2ndAge = parseInt(document.getElementById('feedingFeed2').value) || 0;
-
-            if (!date || !location) {
-                showNotification('Date et emplacement obligatoires', 'error');
-                return;
-            }
-
-            feedingRecords.push({
-                id: Date.now(),
-                date: date,
-                location: location,
-                lot: lot || 'Tous lots',
-                hay: hay,
-                straw: straw,
-                feed1stAge: feed1stAge,
-                feed2ndAge: feed2ndAge
-            });
-            
-            closeFeedingModal();
-            updateDisplay();
-            saveFeedingData();
-            showNotification('Nutrition enregistrée', 'success');
-        } catch (error) {
-            console.error('Erreur nutrition:', error);
-            showNotification('Erreur nutrition', 'error');
-        }
-    }
-
-    function importAnimals() {
-        try {
-            animals = sampleAnimals.slice();
-            updateDisplay();
-            saveData();
-            showNotification(sampleAnimals.length + ' animaux importés', 'success');
-        } catch (error) {
-            console.error('Erreur import animaux:', error);
-            showNotification('Erreur import', 'error');
-        }
-    }
-
-    function importFeeding() {
-        try {
-            feedingRecords = sampleFeeding.slice();
-            updateDisplay();
-            saveFeedingData();
-            showNotification(sampleFeeding.length + ' records nutrition importés', 'success');
-        } catch (error) {
-            console.error('Erreur import nutrition:', error);
-            showNotification('Erreur import nutrition', 'error');
-        }
-    }
-
-    function exportCSV() {
-        try {
-            if (animals.length === 0) {
-                showNotification('Aucune donnée à exporter', 'error');
-                return;
-            }
-
-            var headers = ['ID', 'Date_Entree', 'Date_Naissance', 'Sexe', 'Lot', 'Eleveur', 'Emplacement', 'Statut'];
-            var csv = headers.join(',') + '\n';
-            
-            animals.forEach(function(animal) {
-                var row = [
-                    animal.id,
-                    animal.entryDate || '',
-                    animal.birthDate || '',
-                    animal.sex || '',
-                    animal.lot || '',
-                    animal.breeder || '',
-                    animal.location || '',
-                    animal.exitDate ? 'Sorti' : 'Present'
-                ];
-                csv += row.join(',') + '\n';
-            });
-
-            var blob = new Blob([csv], { type: 'text/csv' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'gestion_cheptel_' + new Date().toISOString().slice(0,10) + '.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showNotification('Export réussi', 'success');
-        } catch (error) {
-            console.error('Erreur export:', error);
-            showNotification('Erreur export', 'error');
-        }
-    }
-
-    // Affichage et mise à jour
-    function updateDisplay() {
-        try {
-            updateTotalCount();
-            
-            if (currentView === 'inventory') {
-                updateInventoryView();
-            } else if (currentView === 'feeding') {
-                updateFeedingView();
-            } else if (currentView === 'stats') {
-                updateStatsView();
-            }
-        } catch (error) {
-            console.error('Erreur affichage:', error);
-        }
-    }
-
-    function updateTotalCount() {
-        try {
-            var present = animals.filter(function(a) { return !a.exitDate; }).length;
-            var element = document.getElementById('totalCount');
-            if (element) element.textContent = present;
-        } catch (error) {
-            console.error('Erreur compteur:', error);
-        }
-    }
-
-    function updateInventoryView() {
-        try {
-            var searchTerm = (document.getElementById('searchInput').value || '').toLowerCase();
-            var filteredAnimals = animals.filter(function(animal) {
-                if (!searchTerm) return true;
-                return animal.id.toLowerCase().includes(searchTerm) ||
-                       (animal.lot && animal.lot.toLowerCase().includes(searchTerm)) ||
-                       (animal.location && animal.location.toLowerCase().includes(searchTerm)) ||
-                       (animal.breeder && animal.breeder.toLowerCase().includes(searchTerm));
-            });
-
-            var container = document.getElementById('animals-container');
-            var empty = document.getElementById('empty-inventory');
-            
-            if (!container || !empty) return;
-
-            if (filteredAnimals.length === 0 && animals.length === 0) {
-                container.innerHTML = '';
-                empty.classList.remove('hidden');
-            } else {
-                empty.classList.add('hidden');
-                container.innerHTML = filteredAnimals.map(function(animal) {
-                    var sexBadge = animal.sex ? 
-                        '<div class="sex-badge ' + (animal.sex === 'Mâle' ? 'sex-male' : 'sex-female') + '">' +
-                            (animal.sex === 'Mâle' ? '♂' : '♀') +
-                        '</div>' : '';
-                    
-                    var exitBadge = animal.exitDate ? 
-                        '<div class="exit-badge">Sorti - ' + animal.exitReason + '</div>' : '';
-                    
-                    var exitClass = animal.exitDate ? ' exited' : '';
-                    
-                    return '<div class="animal-card' + exitClass + '">' +
-                        '<div class="animal-header">' +
-                            '<div>' +
-                                '<div class="animal-id">' + animal.id + '</div>' +
-                                '<div class="animal-lot">' + (animal.lot || '') + '</div>' +
-                                exitBadge +
-                            '</div>' +
-                            '<div style="display: flex; gap: 6px; align-items: center;">' +
-                                sexBadge +
-                                (!animal.exitDate ? '<button onclick="editAnimal(\'' + animal.id + '\')" class="btn btn-secondary btn-small">✏️</button>' : '') +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="animal-details">' +
-                            '<div class="detail-item">' +
-                                '<div class="detail-label">Emplacement</div>' +
-                                '<div class="detail-value">' + (animal.location || '') + '</div>' +
-                            '</div>' +
-                            '<div class="detail-item">' +
-                                '<div class="detail-label">Entrée</div>' +
-                                '<div class="detail-value">' + (animal.entryDate || 'Non renseigné') + '</div>' +
-                            '</div>' +
-                            (animal.birthDate ? 
-                                '<div class="detail-item">' +
-                                    '<div class="detail-label">Naissance</div>' +
-                                    '<div class="detail-value">' + animal.birthDate + '</div>' +
-                                '</div>' : '') +
-                            (animal.breeder ? 
-                                '<div class="detail-item" style="grid-column: 1 / -1;">' +
-                                    '<div class="detail-label">Éleveur</div>' +
-                                    '<div class="detail-value">' + animal.breeder + '</div>' +
-                                '</div>' : '') +
-                            (animal.exitDate ? 
-                                '<div class="detail-item">' +
-                                    '<div class="detail-label">Sortie</div>' +
-                                    '<div class="detail-value" style="color: #dc2626;">' + animal.exitDate + '</div>' +
-                                '</div>' : '') +
-                        '</div>' +
-                    '</div>';
-                }).join('');
-            }
-        } catch (error) {
-            console.error('Erreur inventory view:', error);
-        }
-    }
-
-    function updateFeedingView() {
-        try {
-            var container = document.getElementById('feeding-container');
-            var empty = document.getElementById('empty-feeding');
-            
-            if (!container || !empty) return;
-
-            if (feedingRecords.length === 0) {
-                container.innerHTML = '';
-                empty.classList.remove('hidden');
-            } else {
-                empty.classList.add('hidden');
-                var sortedRecords = feedingRecords.slice().sort(function(a, b) {
-                    return new Date(b.date) - new Date(a.date);
-                });
-                
-                container.innerHTML = sortedRecords.map(function(record) {
-                    var items = [
-                        {key: 'hay', label: 'Foin', unit: 'bottes'},
-                        {key: 'straw', label: 'Paille', unit: 'bottes'},
-                        {key: 'feed1stAge', label: 'Aliment 1er', unit: 'kg'},
-                        {key: 'feed2ndAge', label: 'Aliment 2e', unit: 'kg'}
-                    ].filter(function(item) { return record[item.key] > 0; });
-                    
-                    return '<div style="background:white;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px;border-left:4px solid #059669;">' +
-                        '<div style="margin-bottom:12px;">' +
-                            '<div style="font-size:16px;font-weight:700;color:#1e293b;">' + record.location + '</div>' +
-                            '<div style="color:#059669;font-weight:600;font-size:14px;margin-top:2px;">' + record.date + '</div>' +
-                        '</div>' +
-                        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px;">' +
-                            items.map(function(item) {
-                                return '<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:8px 4px;border-radius:6px;text-align:center;">' +
-                                    '<div style="font-size:10px;color:#166534;margin-bottom:2px;">' + item.label + '</div>' +
-                                    '<div style="font-size:13px;font-weight:700;color:#059669;">' + record[item.key] + ' ' + item.unit + '</div>' +
-                                '</div>';
-                            }).join('') +
-                        '</div>' +
-                    '</div>';
-                }).join('');
-            }
-        } catch (error) {
-            console.error('Erreur feeding view:', error);
-        }
-    }
-
-    function updateStatsView() {
-        try {
-            var total = animals.length;
-            var present = animals.filter(function(a) { return !a.exitDate; }).length;
-            var exited = total - present;
-            var males = animals.filter(function(a) { return a.sex === 'Mâle' && !a.exitDate; }).length;
-            var females = animals.filter(function(a) { return a.sex === 'Femelle' && !a.exitDate; }).length;
-
-            // Mettre à jour les statistiques
-            var statTotal = document.getElementById('stat-total');
-            var statPresent = document.getElementById('stat-present');
-            var statExited = document.getElementById('stat-exited');
-            var statMales = document.getElementById('stat-males');
-            var statFemales = document.getElementById('stat-females');
-
-            if (statTotal) statTotal.textContent = total;
-            if (statPresent) statPresent.textContent = present;
-            if (statExited) statExited.textContent = exited;
-            if (statMales) statMales.textContent = males;
-            if (statFemales) statFemales.textContent = females;
-
-            // Répartition par lot
-            var lots = {};
-            animals.filter(function(a) { return !a.exitDate; }).forEach(function(animal) {
-                if (animal.lot) {
-                    lots[animal.lot] = (lots[animal.lot] || 0) + 1;
-                }
-            });
-
-            var lotsContainer = document.getElementById('lots-breakdown');
-            if (lotsContainer) {
-                if (Object.keys(lots).length === 0) {
-                    lotsContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune donnée disponible</p>';
-                } else {
-                    lotsContainer.innerHTML = Object.keys(lots).map(function(lot) {
-                        return '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">' +
-                            '<span>' + lot + '</span>' +
-                            '<span style="font-weight: 700; color: #2563eb;">' + lots[lot] + '</span>' +
-                        '</div>';
-                    }).join('');
-                }
-            }
-
-            // Causes de sortie
-            var exitReasons = {};
-            animals.filter(function(a) { return a.exitDate; }).forEach(function(animal) {
-                if (animal.exitReason) {
-                    exitReasons[animal.exitReason] = (exitReasons[animal.exitReason] || 0) + 1;
-                }
-            });
-
-            var exitContainer = document.getElementById('exit-reasons');
-            if (exitContainer) {
-                if (Object.keys(exitReasons).length === 0) {
-                    exitContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune sortie enregistrée</p>';
-                } else {
-                    exitContainer.innerHTML = Object.keys(exitReasons).map(function(reason) {
-                        return '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">' +
-                            '<span>' + reason + '</span>' +
-                            '<span style="font-weight: 700; color: #dc2626;">' + exitReasons[reason] + '</span>' +
-                        '</div>';
-                    }).join('');
-                }
-            }
-
-            // Message d'encouragement si pas d'animaux
-            if (total === 0) {
-                if (lotsContainer) {
-                    lotsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">' +
-                        '<p style="color: #64748b; margin-bottom: 10px;">Aucun animal dans le cheptel</p>' +
-                        '<button class="btn btn-primary" onclick="switchView(\'inventory\')">Ajouter des animaux</button>' +
-                    '</div>';
-                }
-            }
-        } catch (error) {
-            console.error('Erreur stats view:', error);
-        }
-    }
-
-    // Sauvegarde et chargement des données
-    function saveData() {
-        try {
-            localStorage.setItem('cheptel_animals', JSON.stringify(animals));
-        } catch (error) {
-            console.error('Erreur sauvegarde:', error);
-        }
-    }
-
-    function saveFeedingData() {
-        try {
-            localStorage.setItem('cheptel_feeding', JSON.stringify(feedingRecords));
-        } catch (error) {
-            console.error('Erreur sauvegarde feeding:', error);
-        }
-    }
-
-    function loadData() {
-        try {
-            var savedAnimals = localStorage.getItem('cheptel_animals');
-            if (savedAnimals) {
-                animals = JSON.parse(savedAnimals);
-            }
-
-            var savedFeeding = localStorage.getItem('cheptel_feeding');
-            if (savedFeeding) {
-                feedingRecords = JSON.parse(savedFeeding);
-            }
-        } catch (error) {
-            console.error('Erreur chargement:', error);
-            animals = [];
-            feedingRecords = [];
-        }
-    }
-
-    // Gestion des clics en dehors des modales
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeAddModal();
-            closeEditModal();
-            closeExitModal();
-            closeFeedingModal();
-        }
-    });
-
-    // Gestion de la touche Échap
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeAddModal();
-            closeEditModal();
-            closeExitModal();
-            closeFeedingModal();
-        }
-    });
-
-    // Style d'installation pour PWA ajouté au CSS
-    var additionalCSS = `
-    .install-banner {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #2563eb;
-        color: white;
-        padding: 12px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transform: translateY(100%);
-        transition: transform 0.3s ease;
-        z-index: 1001;
-    }
-    
-    .install-banner.show {
-        transform: translateY(0);
-    }
-    
-    .install-text {
-        font-size: 14px;
-        font-weight: 600;
-    }
-    
-    .install-btn {
-        background: white;
-        color: #2563eb;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    `;
-    
-    // Ajouter le CSS au head si pas déjà présent
-    if (!document.querySelector('#pwa-css')) {
-        var style = document.createElement('style');
-        style.id = 'pwa-css';
-        style.textContent = additionalCSS;
-        document.head.appendChild(style);
-    }
-</script>
-</body>
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -1170,10 +14,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Cheptel Pro">
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMjU2M2ViIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggOHoiLz48L3N2Zz4=">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMjU2M2ViIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQyIDAtOC0zLjU4LTgtOHMzLjU4LTggOC04IDggMy41OCA4IDgtMy41OCA4LTggOHoiLz48L3N2Zz4=">
     
     <style>
         * {
@@ -1231,6 +71,11 @@
             font-size: 13px; 
             opacity: 0.9; 
             margin-top: 2px; 
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 12px;
         }
         
         .stat-badge { 
@@ -1364,7 +209,7 @@
             border-radius: 10px; 
             padding: 16px; 
             margin-bottom: 12px;
-            transition: box-shadow 0.2s ease;
+            transition: all 0.2s ease;
         }
         
         .animal-card.exited {
@@ -1647,41 +492,44 @@
         
         .notification.success { background: #059669; }
         .notification.error { background: #dc2626; }
+        .notification.warning { background: #d97706; }
+        .notification.info { background: #2563eb; }
         .notification.show { opacity: 1; }
         
-        .install-banner {
+        .sync-status {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #2563eb;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
             color: white;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            z-index: 1001;
-        }
-        
-        .install-banner.show {
-            transform: translateY(0);
-        }
-        
-        .install-text {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .install-btn {
-            background: white;
-            color: #2563eb;
-            border: none;
-            padding: 8px 16px;
+            padding: 8px 12px;
             border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
+            font-size: 12px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sync-status.show {
+            opacity: 1;
+        }
+        
+        .history-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .feeding-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #059669;
         }
         
         @media (max-width: 640px) {
@@ -1693,6 +541,7 @@
             .btn { padding: 10px 12px; font-size: 13px; }
             .form-grid { grid-template-columns: 1fr; }
             .modal { padding: 8px; }
+            .header-stats { gap: 8px; }
         }
     </style>
 </head>
@@ -1701,18 +550,25 @@
         <div class="header">
             <div class="header-content">
                 <div>
-                    <h1 class="title">Gestion Cheptel</h1>
+                    <h1 class="title">Gestion Cheptel Pro</h1>
                     <p class="subtitle">Élevage moderne et connecté</p>
                 </div>
-                <div class="stat-badge">
-                    <div class="stat-number" id="totalCount">0</div>
-                    <div class="stat-label">Présents</div>
+                <div class="header-stats">
+                    <div class="stat-badge">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">Présents</div>
+                    </div>
+                    <div class="stat-badge">
+                        <div class="stat-number" id="totalAnimals">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
                 </div>
             </div>
             
             <nav class="nav">
                 <button class="nav-btn active" onclick="showView('inventory')">🐑 Animaux</button>
                 <button class="nav-btn" onclick="showView('feeding')">🌾 Nutrition</button>
+                <button class="nav-btn" onclick="showView('history')">📋 Historique</button>
                 <button class="nav-btn" onclick="showView('stats')">📈 Données</button>
             </nav>
         </div>
@@ -1730,7 +586,7 @@
                         <button class="btn btn-primary" onclick="openAddModal()">✚ Ajouter</button>
                         <button class="btn btn-danger" onclick="openExitModal()">✖ Sortie</button>
                         <button class="btn btn-success" onclick="importAnimals()">⬇ Import</button>
-                        <button class="btn btn-warning" onclick="exportCSV()">⬆ Export</button>
+                        <button class="btn btn-warning" onclick="exportData()">⬆ Export</button>
                     </div>
                 </div>
                 
@@ -1741,6 +597,50 @@
                     <h3 class="empty-title">Aucun animal enregistré</h3>
                     <p class="empty-text">Commencez par importer des données ou ajouter un nouvel animal</p>
                     <button class="btn btn-success" onclick="importAnimals()">⬇ Importer des exemples</button>
+                </div>
+            </div>
+            
+            <!-- Vue Nutrition -->
+            <div id="view-feeding" class="hidden">
+                <div class="card">
+                    <h2 style="color: #059669; margin-bottom: 8px; font-size: 18px; font-weight: 700;">🌾 Suivi Nutrition</h2>
+                    <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">Rations distribuées quotidiennement</p>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="openFeedingModal()">✚ Nouvelle saisie</button>
+                        <button class="btn btn-success" onclick="importFeeding()">⬇ Import données</button>
+                        <button class="btn btn-warning" onclick="exportFeeding()">⬆ Export nutrition</button>
+                    </div>
+                </div>
+                
+                <div id="feeding-container"></div>
+                
+                <div id="empty-feeding" class="empty-state">
+                    <div class="empty-icon">🌾</div>
+                    <h3 class="empty-title">Aucune donnée nutrition</h3>
+                    <p class="empty-text">Ajoutez des enregistrements d'alimentation</p>
+                    <button class="btn btn-primary" onclick="openFeedingModal()">✚ Première saisie</button>
+                </div>
+            </div>
+            
+            <!-- Vue Historique -->
+            <div id="view-history" class="hidden">
+                <div class="card">
+                    <h2 style="color: #2563eb; margin-bottom: 8px; font-size: 18px; font-weight: 700;">📋 Historique des mouvements</h2>
+                    <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">Toutes les entrées et sorties</p>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="clearHistory()">🗑️ Vider historique</button>
+                        <button class="btn btn-warning" onclick="exportHistory()">⬆ Export historique</button>
+                    </div>
+                </div>
+                
+                <div id="history-container"></div>
+                
+                <div id="empty-history" class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <h3 class="empty-title">Aucun mouvement enregistré</h3>
+                    <p class="empty-text">L'historique apparaîtra ici au fur et à mesure des entrées/sorties</p>
                 </div>
             </div>
             
@@ -1792,11 +692,9 @@
         <button class="fab" onclick="fabAction()">✚</button>
     </div>
 
-    <!-- Install Banner -->
-    <div id="installBanner" class="install-banner">
-        <div class="install-text">Installer l'application sur votre appareil</div>
-        <button class="install-btn" onclick="installApp()">Installer</button>
-        <button onclick="dismissInstall()" style="background: transparent; border: none; color: white; padding: 8px; cursor: pointer;">✕</button>
+    <!-- Status de synchronisation -->
+    <div id="syncStatus" class="sync-status">
+        <span id="syncText">Synchronisation...</span>
     </div>
 
     <!-- Modals -->
@@ -1818,6 +716,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <input type="date" class="form-input" id="inputBirthDate">
+                </div>
+                
+                <div class="form-group">
                     <label class="form-label">Nom éleveur</label>
                     <input type="text" class="form-input" placeholder="Ex: Jacques SANTINI" id="inputBreeder">
                 </div>
@@ -1825,6 +728,1165 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Sexe</label>
+                        <select class="form-select" id="editSex">
+                            <option value="">Sélectionner</option>
+                            <option value="Mâle">Mâle</option>
+                            <option value="Femelle">Femelle</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Lot *</label>
+                        <select class="form-select" id="editLot">
+                            <option value="">Sélectionner</option>
+                            <option value="Béliers moins 1 an">Béliers moins 1 an</option>
+                            <option value="Béliers plus 1 an">Béliers plus 1 an</option>
+                            <option value="Agnelles de pensions">Agnelles de pensions</option>
+                            <option value="Béliers adultes de pension">Béliers adultes de pension</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Emplacement *</label>
+                    <select class="form-select" id="editLocation">
+                        <option value="">Sélectionner</option>
+                        <option value="Bergerie 1">Bergerie 1</option>
+                        <option value="Bergerie 2">Bergerie 2</option>
+                        <option value="Tunnel 1">Tunnel 1</option>
+                        <option value="Tunnel 2">Tunnel 2</option>
+                        <option value="Dactyle 1">Dactyle 1</option>
+                        <option value="Dactyle 2">Dactyle 2</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveEditAnimal()">Sauver</button>
+                    <button class="btn btn-secondary" onclick="closeEditModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="exitModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Sortie animal</h2>
+                <button class="close-btn" onclick="closeExitModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Animal à sortir *</label>
+                    <select class="form-select" id="exitAnimalSelect">
+                        <option value="">Sélectionner</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Date sortie *</label>
+                    <input type="date" class="form-input" id="exitDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Cause sortie *</label>
+                    <select class="form-select" id="exitReason">
+                        <option value="">Sélectionner</option>
+                        <option value="MORT">MORT</option>
+                        <option value="REFORME">RÉFORME</option>
+                        <option value="VENTE">VENTE</option>
+                        <option value="TRANSFERT">TRANSFERT</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Commentaire (optionnel)</label>
+                    <input type="text" class="form-input" placeholder="Détails sur la sortie..." id="exitComment">
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-danger" onclick="processExit()">Enregistrer</button>
+                    <button class="btn btn-secondary" onclick="closeExitModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedingModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Saisie nutrition</h2>
+                <button class="close-btn" onclick="closeFeedingModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Date *</label>
+                    <input type="date" class="form-input" id="feedingDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Emplacement *</label>
+                    <select class="form-select" id="feedingLocation">
+                        <option value="">Sélectionner</option>
+                        <option value="Bergerie 1">Bergerie 1</option>
+                        <option value="Bergerie 2">Bergerie 2</option>
+                        <option value="Tunnel 1">Tunnel 1</option>
+                        <option value="Tunnel 2">Tunnel 2</option>
+                        <option value="Ensemble">Ensemble emplacements</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Lot (optionnel)</label>
+                    <input type="text" class="form-input" placeholder="Tous lots" id="feedingLot">
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Foin (bottes)</label>
+                        <input type="number" class="form-input" min="0" value="0" id="feedingHay">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Paille (bottes)</label>
+                        <input type="number" class="form-input" min="0" value="0" id="feedingStraw">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Aliment 1er (kg)</label>
+                        <input type="number" class="form-input" min="0" value="0" id="feedingFeed1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Aliment 2e (kg)</label>
+                        <input type="number" class="form-input" min="0" value="0" id="feedingFeed2">
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="addFeeding()">Enregistrer</button>
+                    <button class="btn btn-secondary" onclick="closeFeedingModal()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        var animals = [];
+        var feedingRecords = [];
+        var history = [];
+        var currentView = 'inventory';
+        var currentEditingAnimal = null;
+
+        // Données d'exemple
+        var sampleAnimals = [
+            {id: '001', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1', birthDate: '2024-03-15'},
+            {id: '002', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1', birthDate: '2024-03-20'},
+            {id: '003', entryDate: '2024-11-13', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Bernard ROSSI', location: 'Bergerie 1', birthDate: '2024-04-10'},
+            {id: '004', entryDate: '2024-10-06', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Toussaint CIPRIANI', location: 'Bergerie 2', birthDate: '2024-02-25'},
+            {id: '005', entryDate: '2024-10-23', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Jean-Pierre PAOLINI', location: 'Bergerie 2', birthDate: '2024-03-05'},
+            {id: '006', entryDate: '2024-10-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Jean MARTIN', location: 'Tunnel 1', birthDate: '2023-04-15'},
+            {id: '007', entryDate: '2024-11-02', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Serge MATTEI', location: 'Bergerie 1', birthDate: '2024-03-30'},
+            {id: '008', entryDate: '2024-11-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Barthélémy DONATI', location: 'Tunnel 1', birthDate: '2023-05-20'}
+        ];
+
+        var sampleFeeding = [
+            {id: 1, date: '2024-06-20', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 1, feed1stAge: 250, feed2ndAge: 0},
+            {id: 2, date: '2024-06-21', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 0, feed1stAge: 250, feed2ndAge: 0},
+            {id: 3, date: '2024-06-22', location: 'Bergerie 1', lot: 'Béliers moins 1 an', hay: 1, straw: 1, feed1stAge: 150, feed2ndAge: 0},
+            {id: 4, date: '2024-06-22', location: 'Bergerie 2', lot: 'Agnelles de pensions', hay: 1, straw: 0, feed1stAge: 100, feed2ndAge: 50},
+            {id: 5, date: '2024-06-23', location: 'Ensemble', lot: 'Tous lots', hay: 2, straw: 1, feed1stAge: 300, feed2ndAge: 0}
+        ];
+
+        // Base de données
+        class CheptelDatabase {
+            constructor() {
+                this.version = '2.0';
+            }
+
+            saveAll() {
+                try {
+                    const data = {
+                        version: this.version,
+                        timestamp: new Date().toISOString(),
+                        animals: animals,
+                        feedingRecords: feedingRecords,
+                        history: history
+                    };
+                    
+                    localStorage.setItem('cheptel_database', JSON.stringify(data));
+                    this.showSyncStatus('Données sauvegardées', 'success');
+                    return true;
+                } catch (error) {
+                    console.error('Erreur sauvegarde:', error);
+                    this.showSyncStatus('Erreur sauvegarde', 'error');
+                    return false;
+                }
+            }
+
+            loadAll() {
+                try {
+                    const saved = localStorage.getItem('cheptel_database');
+                    if (!saved) return false;
+
+                    const data = JSON.parse(saved);
+                    animals = data.animals || [];
+                    feedingRecords = data.feedingRecords || [];
+                    history = data.history || [];
+
+                    this.showSyncStatus('Données chargées', 'success');
+                    return true;
+                } catch (error) {
+                    console.error('Erreur chargement:', error);
+                    animals = [];
+                    feedingRecords = [];
+                    history = [];
+                    return false;
+                }
+            }
+
+            addToHistory(action, animalId, details = {}) {
+                const entry = {
+                    id: 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    timestamp: new Date().toISOString(),
+                    action: action,
+                    animalId: animalId,
+                    date: details.date || new Date().toISOString().split('T')[0],
+                    details: details.details || '',
+                    reason: details.reason || null,
+                    comment: details.comment || null
+                };
+
+                history.unshift(entry);
+                
+                if (history.length > 1000) {
+                    history = history.slice(0, 1000);
+                }
+
+                return entry;
+            }
+
+            showSyncStatus(message, type = 'info') {
+                const statusEl = document.getElementById('syncStatus');
+                const textEl = document.getElementById('syncText');
+                
+                if (statusEl && textEl) {
+                    textEl.textContent = message;
+                    statusEl.className = `sync-status show ${type}`;
+                    
+                    setTimeout(() => {
+                        statusEl.classList.remove('show');
+                    }, 2000);
+                }
+            }
+
+            exportComplete() {
+                try {
+                    const exportData = {
+                        exportDate: new Date().toISOString(),
+                        version: this.version,
+                        summary: {
+                            totalAnimals: animals.length,
+                            presentAnimals: animals.filter(a => !a.exitDate).length,
+                            totalHistory: history.length,
+                            totalFeeding: feedingRecords.length
+                        },
+                        animals: animals,
+                        feedingRecords: feedingRecords,
+                        history: history
+                    };
+
+                    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+                        type: 'application/json' 
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `cheptel_export_${new Date().toISOString().slice(0,10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showNotification('Export complet réussi', 'success');
+                    return true;
+                } catch (error) {
+                    console.error('Erreur export:', error);
+                    showNotification('Erreur export', 'error');
+                    return false;
+                }
+            }
+        }
+
+        const db = new CheptelDatabase();
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log('Démarrage Gestion Cheptel Pro v2.0...');
+                db.loadAll();
+                updateDisplay();
+                setTodayDates();
+                showNotification('Application prête', 'success');
+                
+                // Sauvegarde automatique
+                setInterval(() => db.saveAll(), 300000); // 5 minutes
+            } catch (error) {
+                console.error('Erreur initialisation:', error);
+                showNotification('Erreur de démarrage', 'error');
+            }
+        });
+
+        // Navigation
+        function showView(viewName) {
+            currentView = viewName;
+            
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (viewName === 'inventory') {
+                buttons[0].classList.add('active');
+            } else if (viewName === 'feeding') {
+                buttons[1].classList.add('active');
+            } else if (viewName === 'history') {
+                buttons[2].classList.add('active');
+            } else if (viewName === 'stats') {
+                buttons[3].classList.add('active');
+            }
+            
+            ['inventory', 'feeding', 'history', 'stats'].forEach(view => {
+                const el = document.getElementById(`view-${view}`);
+                if (el) el.classList.add('hidden');
+            });
+            
+            const targetView = document.getElementById(`view-${viewName}`);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+            }
+            
+            updateDisplay();
+        }
+
+        function fabAction() {
+            if (currentView === 'inventory') {
+                openAddModal();
+            } else if (currentView === 'feeding') {
+                openFeedingModal();
+            } else {
+                showView('inventory');
+                setTimeout(openAddModal, 300);
+            }
+        }
+
+        // Gestion des modals
+        function openAddModal() {
+            document.getElementById('addModal').classList.remove('hidden');
+            setTodayDates();
+            resetAddForm();
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+            currentEditingAnimal = null;
+        }
+
+        function resetAddForm() {
+            const inputs = ['inputId', 'inputBreeder'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            
+            const selects = ['inputSex', 'inputLot', 'inputLocation'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            
+            const birthDate = document.getElementById('inputBirthDate');
+            if (birthDate) birthDate.value = '';
+        }
+
+        function editAnimal(animalId) {
+            try {
+                const animal = animals.find(a => a.id === animalId);
+                if (!animal) {
+                    showNotification('Animal non trouvé', 'error');
+                    return;
+                }
+                
+                currentEditingAnimal = animalId;
+                
+                document.getElementById('editId').value = animal.id;
+                document.getElementById('editDate').value = animal.entryDate || '';
+                document.getElementById('editBirthDate').value = animal.birthDate || '';
+                document.getElementById('editBreeder').value = animal.breeder || '';
+                document.getElementById('editSex').value = animal.sex || '';
+                document.getElementById('editLot').value = animal.lot || '';
+                document.getElementById('editLocation').value = animal.location || '';
+                
+                document.getElementById('editModal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Erreur édition:', error);
+                showNotification('Erreur ouverture édition', 'error');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            currentEditingAnimal = null;
+        }
+
+        function saveEditAnimal() {
+            try {
+                if (!currentEditingAnimal) return;
+
+                const animalIndex = animals.findIndex(a => a.id === currentEditingAnimal);
+                if (animalIndex === -1) {
+                    showNotification('Animal non trouvé', 'error');
+                    return;
+                }
+
+                const lot = document.getElementById('editLot').value;
+                const location = document.getElementById('editLocation').value;
+
+                if (!lot || !location) {
+                    showNotification('Lot et emplacement obligatoires', 'error');
+                    return;
+                }
+
+                const oldAnimal = { ...animals[animalIndex] };
+                
+                animals[animalIndex].entryDate = document.getElementById('editDate').value;
+                animals[animalIndex].birthDate = document.getElementById('editBirthDate').value;
+                animals[animalIndex].breeder = document.getElementById('editBreeder').value.trim();
+                animals[animalIndex].sex = document.getElementById('editSex').value;
+                animals[animalIndex].lot = lot;
+                animals[animalIndex].location = location;
+
+                db.addToHistory('EDIT', currentEditingAnimal, {
+                    details: `Modification: ${oldAnimal.lot} → ${lot}, ${oldAnimal.location} → ${location}`
+                });
+
+                closeEditModal();
+                updateDisplay();
+                db.saveAll();
+                showNotification('Animal modifié', 'success');
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+                showNotification('Erreur sauvegarde', 'error');
+            }
+        }
+
+        function openExitModal() {
+            updateExitAnimalsList();
+            document.getElementById('exitModal').classList.remove('hidden');
+            setTodayDates();
+        }
+
+        function closeExitModal() {
+            document.getElementById('exitModal').classList.add('hidden');
+        }
+
+        function updateExitAnimalsList() {
+            const select = document.getElementById('exitAnimalSelect');
+            if (!select) return;
+
+            const presentAnimals = animals.filter(a => !a.exitDate);
+            select.innerHTML = '<option value="">Sélectionner</option>';
+            
+            presentAnimals.forEach(animal => {
+                const option = document.createElement('option');
+                option.value = animal.id;
+                option.textContent = `${animal.id} - ${animal.lot}`;
+                select.appendChild(option);
+            });
+        }
+
+        function openFeedingModal() {
+            document.getElementById('feedingModal').classList.remove('hidden');
+            setTodayDates();
+            resetFeedingForm();
+        }
+
+        function closeFeedingModal() {
+            document.getElementById('feedingModal').classList.add('hidden');
+        }
+
+        function resetFeedingForm() {
+            try {
+                const selects = ['feedingLocation'];
+                selects.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.value = '';
+                });
+                const inputs = ['feedingLot'];
+                inputs.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.value = '';
+                });
+                const numbers = ['feedingHay', 'feedingStraw', 'feedingFeed1', 'feedingFeed2'];
+                numbers.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.value = '0';
+                });
+            } catch (error) {
+                console.error('Erreur reset feeding:', error);
+            }
+        }
+
+        // Actions principales
+        function addAnimal() {
+            try {
+                const id = document.getElementById('inputId').value.trim();
+                const date = document.getElementById('inputDate').value;
+                const birthDate = document.getElementById('inputBirthDate').value;
+                const breeder = document.getElementById('inputBreeder').value.trim();
+                const sex = document.getElementById('inputSex').value;
+                const lot = document.getElementById('inputLot').value;
+                const location = document.getElementById('inputLocation').value;
+
+                if (!id || !lot || !location) {
+                    showNotification('ID, lot et emplacement obligatoires', 'error');
+                    return;
+                }
+
+                const existingAnimal = animals.find(a => a.id === id);
+                if (existingAnimal) {
+                    showNotification('ID déjà existant', 'error');
+                    return;
+                }
+
+                const newAnimal = {
+                    id: id,
+                    entryDate: date,
+                    birthDate: birthDate,
+                    breeder: breeder,
+                    sex: sex,
+                    lot: lot,
+                    location: location,
+                    createdAt: new Date().toISOString()
+                };
+
+                animals.push(newAnimal);
+                
+                db.addToHistory('ENTRY', id, {
+                    date: date,
+                    details: `Entrée: ${lot} - ${location}${breeder ? ' (' + breeder + ')' : ''}`
+                });
+                
+                closeAddModal();
+                updateDisplay();
+                db.saveAll();
+                showNotification('Animal ajouté', 'success');
+            } catch (error) {
+                console.error('Erreur ajout:', error);
+                showNotification('Erreur ajout', 'error');
+            }
+        }
+
+        function processExit() {
+            try {
+                const animalId = document.getElementById('exitAnimalSelect').value;
+                const exitDate = document.getElementById('exitDate').value;
+                const exitReason = document.getElementById('exitReason').value;
+                const exitComment = document.getElementById('exitComment').value.trim();
+
+                if (!animalId || !exitDate || !exitReason) {
+                    showNotification('Tous les champs obligatoires', 'error');
+                    return;
+                }
+
+                const animalIndex = animals.findIndex(a => a.id === animalId);
+                if (animalIndex !== -1) {
+                    const animal = animals[animalIndex];
+                    
+                    animals[animalIndex].exitDate = exitDate;
+                    animals[animalIndex].exitReason = exitReason;
+                    if (exitComment) {
+                        animals[animalIndex].exitComment = exitComment;
+                    }
+                    
+                    db.addToHistory('EXIT', animalId, {
+                        date: exitDate,
+                        reason: exitReason,
+                        comment: exitComment,
+                        details: `Sortie: ${exitReason}${exitComment ? ' - ' + exitComment : ''}`
+                    });
+                    
+                    closeExitModal();
+                    updateDisplay();
+                    db.saveAll();
+                    showNotification('Sortie enregistrée', 'success');
+                }
+            } catch (error) {
+                console.error('Erreur sortie:', error);
+                showNotification('Erreur sortie', 'error');
+            }
+        }
+
+        function addFeeding() {
+            try {
+                const date = document.getElementById('feedingDate').value;
+                const location = document.getElementById('feedingLocation').value;
+                const lot = document.getElementById('feedingLot').value.trim();
+                const hay = parseInt(document.getElementById('feedingHay').value) || 0;
+                const straw = parseInt(document.getElementById('feedingStraw').value) || 0;
+                const feed1stAge = parseInt(document.getElementById('feedingFeed1').value) || 0;
+                const feed2ndAge = parseInt(document.getElementById('feedingFeed2').value) || 0;
+
+                if (!date || !location) {
+                    showNotification('Date et emplacement obligatoires', 'error');
+                    return;
+                }
+
+                const newFeeding = {
+                    id: Date.now(),
+                    date: date,
+                    location: location,
+                    lot: lot || 'Tous lots',
+                    hay: hay,
+                    straw: straw,
+                    feed1stAge: feed1stAge,
+                    feed2ndAge: feed2ndAge,
+                    createdAt: new Date().toISOString()
+                };
+
+                feedingRecords.push(newFeeding);
+                
+                db.addToHistory('FEEDING', `feeding_${newFeeding.id}`, {
+                    date: date,
+                    details: `Nutrition: ${location} - Foin: ${hay}, Paille: ${straw}, Aliment 1er: ${feed1stAge}kg, Aliment 2e: ${feed2ndAge}kg`
+                });
+                
+                closeFeedingModal();
+                updateDisplay();
+                db.saveAll();
+                showNotification('Nutrition enregistrée', 'success');
+            } catch (error) {
+                console.error('Erreur nutrition:', error);
+                showNotification('Erreur nutrition', 'error');
+            }
+        }
+
+        function importAnimals() {
+            try {
+                sampleAnimals.forEach(sample => {
+                    const existing = animals.find(a => a.id === sample.id);
+                    if (!existing) {
+                        animals.push({
+                            ...sample,
+                            createdAt: new Date().toISOString()
+                        });
+                        
+                        db.addToHistory('ENTRY', sample.id, {
+                            date: sample.entryDate,
+                            details: `Import: ${sample.lot} - ${sample.location} (${sample.breeder})`
+                        });
+                    }
+                });
+                
+                updateDisplay();
+                db.saveAll();
+                showNotification(`${sampleAnimals.length} animaux importés`, 'success');
+            } catch (error) {
+                console.error('Erreur import:', error);
+                showNotification('Erreur import', 'error');
+            }
+        }
+
+        function importFeeding() {
+            try {
+                sampleFeeding.forEach(sample => {
+                    const existing = feedingRecords.find(f => f.id === sample.id);
+                    if (!existing) {
+                        feedingRecords.push({
+                            ...sample,
+                            createdAt: new Date().toISOString()
+                        });
+                        
+                        db.addToHistory('FEEDING', `feeding_${sample.id}`, {
+                            date: sample.date,
+                            details: `Import nutrition: ${sample.location} - Foin: ${sample.hay}, Aliment 1er: ${sample.feed1stAge}kg`
+                        });
+                    }
+                });
+                
+                updateDisplay();
+                db.saveAll();
+                showNotification(`${sampleFeeding.length} records nutrition importés`, 'success');
+            } catch (error) {
+                console.error('Erreur import nutrition:', error);
+                showNotification('Erreur import nutrition', 'error');
+            }
+        }
+
+        function exportData() {
+            return db.exportComplete();
+        }
+
+        function exportFeeding() {
+            try {
+                if (feedingRecords.length === 0) {
+                    showNotification('Aucune donnée nutrition à exporter', 'error');
+                    return;
+                }
+
+                const headers = ['Date', 'Emplacement', 'Lot', 'Foin_bottes', 'Paille_bottes', 'Aliment_1er_kg', 'Aliment_2e_kg'];
+                let csv = headers.join(',') + '\n';
+                
+                feedingRecords.forEach(record => {
+                    const row = [
+                        record.date,
+                        record.location,
+                        record.lot || 'Tous lots',
+                        record.hay || 0,
+                        record.straw || 0,
+                        record.feed1stAge || 0,
+                        record.feed2ndAge || 0
+                    ];
+                    csv += row.join(',') + '\n';
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `nutrition_cheptel_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Export nutrition réussi', 'success');
+            } catch (error) {
+                console.error('Erreur export nutrition:', error);
+                showNotification('Erreur export nutrition', 'error');
+            }
+        }
+
+        function exportHistory() {
+            try {
+                if (history.length === 0) {
+                    showNotification('Aucun historique à exporter', 'error');
+                    return;
+                }
+
+                const headers = ['Date', 'Heure', 'Action', 'Animal_ID', 'Details', 'Raison', 'Commentaire'];
+                let csv = headers.join(',') + '\n';
+                
+                history.forEach(entry => {
+                    const date = new Date(entry.timestamp);
+                    const row = [
+                        entry.date || date.toISOString().split('T')[0],
+                        date.toTimeString().split(' ')[0],
+                        entry.action,
+                        entry.animalId,
+                        `"${entry.details || ''}"`,
+                        entry.reason || '',
+                        `"${entry.comment || ''}"`
+                    ];
+                    csv += row.join(',') + '\n';
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `historique_cheptel_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Export historique réussi', 'success');
+            } catch (error) {
+                console.error('Erreur export historique:', error);
+                showNotification('Erreur export historique', 'error');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Êtes-vous sûr de vouloir vider l\'historique ? Cette action est irréversible.')) {
+                history = [];
+                db.saveAll();
+                updateDisplay();
+                showNotification('Historique vidé', 'warning');
+            }
+        }
+
+        // Affichage et mise à jour
+        function updateDisplay() {
+            try {
+                updateHeaderStats();
+                
+                if (currentView === 'inventory') {
+                    updateInventoryView();
+                } else if (currentView === 'feeding') {
+                    updateFeedingView();
+                } else if (currentView === 'history') {
+                    updateHistoryView();
+                } else if (currentView === 'stats') {
+                    updateStatsView();
+                }
+            } catch (error) {
+                console.error('Erreur affichage:', error);
+            }
+        }
+
+        function updateHeaderStats() {
+            const present = animals.filter(a => !a.exitDate).length;
+            const total = animals.length;
+            
+            const totalCountEl = document.getElementById('totalCount');
+            const totalAnimalsEl = document.getElementById('totalAnimals');
+            
+            if (totalCountEl) totalCountEl.textContent = present;
+            if (totalAnimalsEl) totalAnimalsEl.textContent = total;
+        }
+
+        function updateInventoryView() {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const filteredAnimals = animals.filter(animal => {
+                if (!searchTerm) return true;
+                return animal.id.toLowerCase().includes(searchTerm) ||
+                       (animal.lot && animal.lot.toLowerCase().includes(searchTerm)) ||
+                       (animal.location && animal.location.toLowerCase().includes(searchTerm)) ||
+                       (animal.breeder && animal.breeder.toLowerCase().includes(searchTerm));
+            });
+
+            const container = document.getElementById('animals-container');
+            const empty = document.getElementById('empty-inventory');
+            
+            if (!container || !empty) return;
+
+            if (filteredAnimals.length === 0 && animals.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                container.innerHTML = filteredAnimals.map(animal => {
+                    const sexBadge = animal.sex ? 
+                        `<div class="sex-badge ${animal.sex === 'Mâle' ? 'sex-male' : 'sex-female'}">${animal.sex === 'Mâle' ? '♂' : '♀'}</div>` : '';
+                    
+                    const exitBadge = animal.exitDate ? 
+                        `<div class="exit-badge">Sorti - ${animal.exitReason}</div>` : '';
+                    
+                    const exitClass = animal.exitDate ? ' exited' : '';
+                    
+                    return `<div class="animal-card${exitClass}">
+                        <div class="animal-header">
+                            <div>
+                                <div class="animal-id">${animal.id}</div>
+                                <div class="animal-lot">${animal.lot || ''}</div>
+                                ${exitBadge}
+                            </div>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                ${sexBadge}
+                                ${!animal.exitDate ? `<button onclick="editAnimal('${animal.id}')" class="btn btn-secondary btn-small">✏️</button>` : ''}
+                            </div>
+                        </div>
+                        <div class="animal-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Emplacement</div>
+                                <div class="detail-value">${animal.location || ''}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Entrée</div>
+                                <div class="detail-value">${animal.entryDate || 'Non renseigné'}</div>
+                            </div>
+                            ${animal.birthDate ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Naissance</div>
+                                    <div class="detail-value">${animal.birthDate}</div>
+                                </div>` : ''}
+                            ${animal.breeder ? `
+                                <div class="detail-item" style="grid-column: 1 / -1;">
+                                    <div class="detail-label">Éleveur</div>
+                                    <div class="detail-value">${animal.breeder}</div>
+                                </div>` : ''}
+                            ${animal.exitDate ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Sortie</div>
+                                    <div class="detail-value" style="color: #dc2626;">${animal.exitDate}</div>
+                                </div>` : ''}
+                            ${animal.exitComment ? `
+                                <div class="detail-item" style="grid-column: 1 / -1;">
+                                    <div class="detail-label">Commentaire sortie</div>
+                                    <div class="detail-value" style="color: #64748b; font-style: italic;">${animal.exitComment}</div>
+                                </div>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function updateFeedingView() {
+            try {
+                const container = document.getElementById('feeding-container');
+                const empty = document.getElementById('empty-feeding');
+                
+                if (!container || !empty) return;
+
+                if (feedingRecords.length === 0) {
+                    container.innerHTML = '';
+                    empty.classList.remove('hidden');
+                } else {
+                    empty.classList.add('hidden');
+                    const sortedRecords = feedingRecords.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    container.innerHTML = sortedRecords.map(record => {
+                        const items = [
+                            {key: 'hay', label: 'Foin', unit: 'bottes'},
+                            {key: 'straw', label: 'Paille', unit: 'bottes'},
+                            {key: 'feed1stAge', label: 'Aliment 1er', unit: 'kg'},
+                            {key: 'feed2ndAge', label: 'Aliment 2e', unit: 'kg'}
+                        ].filter(item => record[item.key] > 0);
+                        
+                        return `<div class="feeding-card">
+                            <div style="margin-bottom:12px;">
+                                <div style="font-size:16px;font-weight:700;color:#1e293b;">${record.location}</div>
+                                <div style="color:#059669;font-weight:600;font-size:14px;margin-top:2px;">${record.date}</div>
+                                ${record.lot !== 'Tous lots' ? `<div style="color:#64748b;font-size:12px;margin-top:2px;">Lot: ${record.lot}</div>` : ''}
+                            </div>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px;">
+                                ${items.map(item => `
+                                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:8px 4px;border-radius:6px;text-align:center;">
+                                        <div style="font-size:10px;color:#166534;margin-bottom:2px;">${item.label}</div>
+                                        <div style="font-size:13px;font-weight:700;color:#059669;">${record[item.key]} ${item.unit}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Erreur feeding view:', error);
+            }
+        }
+
+        function updateHistoryView() {
+            const container = document.getElementById('history-container');
+            const empty = document.getElementById('empty-history');
+            
+            if (!container || !empty) return;
+
+            if (history.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                
+                const groupedHistory = {};
+                history.forEach(entry => {
+                    const date = entry.date || new Date(entry.timestamp).toISOString().split('T')[0];
+                    if (!groupedHistory[date]) {
+                        groupedHistory[date] = [];
+                    }
+                    groupedHistory[date].push(entry);
+                });
+
+                const sortedDates = Object.keys(groupedHistory).sort((a, b) => new Date(b) - new Date(a));
+
+                container.innerHTML = sortedDates.map(date => {
+                    const entries = groupedHistory[date];
+                    const dateObj = new Date(date);
+                    const formattedDate = dateObj.toLocaleDateString('fr-FR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+
+                    return `
+                        <div class="card">
+                            <h3 style="color: #2563eb; margin-bottom: 12px; font-size: 16px; font-weight: 700;">
+                                📅 ${formattedDate}
+                            </h3>
+                            ${entries.map(entry => {
+                                const time = new Date(entry.timestamp).toLocaleTimeString('fr-FR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                                
+                                const actionIcon = {
+                                    'ENTRY': '➕',
+                                    'EXIT': '➖', 
+                                    'EDIT': '✏️',
+                                    'FEEDING': '🌾'
+                                }[entry.action] || '📝';
+                                
+                                const actionColor = {
+                                    'ENTRY': '#059669',
+                                    'EXIT': '#dc2626',
+                                    'EDIT': '#d97706',
+                                    'FEEDING': '#059669'
+                                }[entry.action] || '#64748b';
+
+                                return `
+                                    <div class="history-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="font-size: 16px;">${actionIcon}</span>
+                                                <strong style="color: ${actionColor};">${entry.animalId}</strong>
+                                            </div>
+                                            <span style="color: #64748b; font-size: 12px;">${time}</span>
+                                        </div>
+                                        <div style="color: #1e293b; margin-bottom: 2px;">${entry.details}</div>
+                                        ${entry.reason ? `<div style="color: #64748b; font-size: 12px;">Raison: ${entry.reason}</div>` : ''}
+                                        ${entry.comment ? `<div style="color: #64748b; font-size: 12px; font-style: italic;">"${entry.comment}"</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function updateStatsView() {
+            const total = animals.length;
+            const present = animals.filter(a => !a.exitDate).length;
+            const exited = total - present;
+            const males = animals.filter(a => a.sex === 'Mâle' && !a.exitDate).length;
+            const females = animals.filter(a => a.sex === 'Femelle' && !a.exitDate).length;
+
+            const elements = {
+                'stat-total': total,
+                'stat-present': present,
+                'stat-exited': exited,
+                'stat-males': males,
+                'stat-females': females
+            };
+
+            Object.entries(elements).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            });
+
+            const lots = {};
+            animals.filter(a => !a.exitDate).forEach(animal => {
+                if (animal.lot) {
+                    lots[animal.lot] = (lots[animal.lot] || 0) + 1;
+                }
+            });
+
+            const lotsContainer = document.getElementById('lots-breakdown');
+            if (lotsContainer) {
+                if (Object.keys(lots).length === 0) {
+                    lotsContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune donnée disponible</p>';
+                } else {
+                    lotsContainer.innerHTML = Object.entries(lots).map(([lot, count]) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <span>${lot}</span>
+                            <span style="font-weight: 700; color: #2563eb;">${count}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            const exitReasons = {};
+            animals.filter(a => a.exitDate).forEach(animal => {
+                if (animal.exitReason) {
+                    exitReasons[animal.exitReason] = (exitReasons[animal.exitReason] || 0) + 1;
+                }
+            });
+
+            const exitContainer = document.getElementById('exit-reasons');
+            if (exitContainer) {
+                if (Object.keys(exitReasons).length === 0) {
+                    exitContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune sortie enregistrée</p>';
+                } else {
+                    exitContainer.innerHTML = Object.entries(exitReasons).map(([reason, count]) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+                            <span>${reason}</span>
+                            <span style="font-weight: 700; color: #dc2626;">${count}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (total === 0 && lotsContainer) {
+                lotsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="color: #64748b; margin-bottom: 10px;">Aucun animal dans le cheptel</p>
+                        <button class="btn btn-primary" onclick="showView('inventory')">Ajouter des animaux</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Utilitaires
+        function setTodayDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = ['inputDate', 'exitDate', 'feedingDate'];
+            dateInputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = today;
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            try {
+                const existing = document.querySelector('.notification');
+                if (existing) existing.remove();
+
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => notification.classList.add('show'), 100);
+
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            } catch (error) {
+                console.error('Erreur notification:', error);
+            }
+        }
+
+        // Gestion des événements
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeAddModal();
+                closeEditModal();
+                closeExitModal();
+                closeFeedingModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAddModal();
+                closeEditModal();
+                closeExitModal();
+                closeFeedingModal();
+            }
+        });
+
+        window.addEventListener('beforeunload', function() {
+            db.saveAll();
+        });
+
+        window.addEventListener('error', function(event) {
+            console.error('Erreur globale:', event.error);
+            showNotification('Une erreur est survenue', 'error');
+        });
+
+        setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                db.saveAll();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>label">Sexe</label>
                         <select class="form-select" id="inputSex">
                             <option value="">Sélectionner</option>
                             <option value="Mâle">Mâle</option>
@@ -1865,618 +1927,33 @@
         </div>
     </div>
 
-    <div id="exitModal" class="modal hidden">
+    <div id="editModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Sortie animal</h2>
-                <button class="close-btn" onclick="closeExitModal()">✕</button>
+                <h2 class="modal-title">Éditer animal</h2>
+                <button class="close-btn" onclick="closeEditModal()">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Animal à sortir *</label>
-                    <select class="form-select" id="exitAnimalSelect">
-                        <option value="">Sélectionner</option>
-                    </select>
+                    <label class="form-label">ID animal</label>
+                    <input type="text" class="form-input" id="editId" disabled>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Date sortie *</label>
-                    <input type="date" class="form-input" id="exitDate">
+                    <label class="form-label">Date d'entrée</label>
+                    <input type="date" class="form-input" id="editDate">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Cause sortie *</label>
-                    <select class="form-select" id="exitReason">
-                        <option value="">Sélectionner</option>
-                        <option value="MORT">MORT</option>
-                        <option value="REFORME">RÉFORME</option>
-                        <option value="VENTE">VENTE</option>
-                        <option value="TRANSFERT">TRANSFERT</option>
-                    </select>
+                    <label class="form-label">Date de naissance</label>
+                    <input type="date" class="form-input" id="editBirthDate">
                 </div>
                 
-                <div class="btn-group">
-                    <button class="btn btn-danger" onclick="processExit()">Enregistrer</button>
-                    <button class="btn btn-secondary" onclick="closeExitModal()">Annuler</button>
+                <div class="form-group">
+                    <label class="form-label">Nom éleveur</label>
+                    <input type="text" class="form-input" id="editBreeder">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Variables globales
-        var animals = [];
-        var currentView = 'inventory';
-        var currentEditingAnimal = null;
-        var deferredPrompt;
-
-        // Données d'exemple
-        var sampleAnimals = [
-            {id: '001', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1'},
-            {id: '002', entryDate: '2024-10-30', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Jacques SANTINI', location: 'Bergerie 1'},
-            {id: '003', entryDate: '2024-11-13', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Bernard ROSSI', location: 'Bergerie 1'},
-            {id: '004', entryDate: '2024-10-06', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Toussaint CIPRIANI', location: 'Bergerie 2'},
-            {id: '005', entryDate: '2024-10-23', sex: 'Femelle', lot: 'Agnelles de pensions', breeder: 'Jean-Pierre PAOLINI', location: 'Bergerie 2'},
-            {id: '006', entryDate: '2024-10-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Jean MARTIN', location: 'Tunnel 1'},
-            {id: '007', entryDate: '2024-11-02', sex: 'Mâle', lot: 'Béliers moins 1 an', breeder: 'Serge MATTEI', location: 'Bergerie 1'},
-            {id: '008', entryDate: '2024-11-06', sex: 'Mâle', lot: 'Béliers adultes de pension', breeder: 'Barthélémy DONATI', location: 'Tunnel 1'}
-        ];
-
-        // PWA Installation
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-            showInstallBanner();
-        });
-
-        window.addEventListener('appinstalled', function(e) {
-            hideInstallBanner();
-            showNotification('Application installée avec succès!', 'success');
-        });
-
-        function showInstallBanner() {
-            setTimeout(function() {
-                document.getElementById('installBanner').classList.add('show');
-            }, 3000);
-        }
-
-        function hideInstallBanner() {
-            document.getElementById('installBanner').classList.remove('show');
-        }
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function(choiceResult) {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
-                    deferredPrompt = null;
-                });
-            }
-            hideInstallBanner();
-        }
-
-        function dismissInstall() {
-            hideInstallBanner();
-        }
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful');
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                console.log('Démarrage Gestion Cheptel Pro...');
-                loadData();
-                updateDisplay();
-                setTodayDates();
-                showNotification('Application prête', 'success');
-            } catch (error) {
-                console.error('Erreur initialisation:', error);
-                showNotification('Erreur de démarrage', 'error');
-            }
-        });
-
-        function setTodayDates() {
-            try {
-                var today = new Date().toISOString().split('T')[0];
-                var dateInputs = ['inputDate', 'exitDate'];
-                dateInputs.forEach(function(id) {
-                    var element = document.getElementById(id);
-                    if (element) element.value = today;
-                });
-            } catch (error) {
-                console.error('Erreur dates:', error);
-            }
-        }
-
-        function showNotification(message, type) {
-            try {
-                var existingNotification = document.querySelector('.notification');
-                if (existingNotification) {
-                    existingNotification.remove();
-                }
-
-                var notification = document.createElement('div');
-                notification.className = 'notification ' + type;
-                notification.textContent = message;
-                document.body.appendChild(notification);
-
-                setTimeout(function() {
-                    notification.classList.add('show');
-                }, 100);
-
-                setTimeout(function() {
-                    notification.classList.remove('show');
-                    setTimeout(function() {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 3000);
-            } catch (error) {
-                console.error('Erreur notification:', error);
-            }
-        }
-
-        // Navigation
-        function switchView(view) {
-            try {
-                currentView = view;
                 
-                var navButtons = document.querySelectorAll('.nav-btn');
-                navButtons.forEach(function(btn) {
-                    btn.classList.remove('active');
-                });
-                
-                var activeBtn = Array.from(navButtons).find(function(btn) {
-                    return btn.textContent.toLowerCase().includes(view === 'inventory' ? 'animaux' : 'données');
-                });
-                if (activeBtn) {
-                    activeBtn.classList.add('active');
-                }
-                
-                var views = ['inventory', 'stats'];
-                views.forEach(function(v) {
-                    var element = document.getElementById('view-' + v);
-                    if (element) {
-                        element.classList.toggle('hidden', v !== view);
-                    }
-                });
-                
-                updateDisplay();
-            } catch (error) {
-                console.error('Erreur navigation:', error);
-            }
-        }
-
-        function fabAction() {
-            try {
-                openAddModal();
-            } catch (error) {
-                console.error('Erreur FAB:', error);
-            }
-        }
-
-        // Gestion des modals
-        function openAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            setTodayDates();
-        }
-
-        function closeAddModal() {
-            document.getElementById('addModal').classList.add('hidden');
-            resetAddForm();
-        }
-
-        function resetAddForm() {
-            try {
-                var inputs = ['inputId', 'inputBreeder'];
-                inputs.forEach(function(id) {
-                    var element = document.getElementById(id);
-                    if (element) element.value = '';
-                });
-                var selects = ['inputSex', 'inputLot', 'inputLocation'];
-                selects.forEach(function(id) {
-                    var element = document.getElementById(id);
-                    if (element) element.value = '';
-                });
-            } catch (error) {
-                console.error('Erreur reset form:', error);
-            }
-        }
-
-        function editAnimal(animalId) {
-            try {
-                var animal = animals.find(function(a) { return a.id === animalId; });
-                if (!animal) {
-                    showNotification('Animal non trouvé', 'error');
-                    return;
-                }
-                
-                currentEditingAnimal = animalId;
-                
-                document.getElementById('inputId').value = animal.id;
-                document.getElementById('inputDate').value = animal.entryDate || '';
-                document.getElementById('inputBreeder').value = animal.breeder || '';
-                document.getElementById('inputSex').value = animal.sex || '';
-                document.getElementById('inputLot').value = animal.lot || '';
-                document.getElementById('inputLocation').value = animal.location || '';
-                
-                openAddModal();
-            } catch (error) {
-                console.error('Erreur édition:', error);
-                showNotification('Erreur ouverture édition', 'error');
-            }
-        }
-
-        function openExitModal() {
-            updateExitAnimalsList();
-            document.getElementById('exitModal').classList.remove('hidden');
-            setTodayDates();
-        }
-
-        function closeExitModal() {
-            document.getElementById('exitModal').classList.add('hidden');
-        }
-
-        function updateExitAnimalsList() {
-            try {
-                var select = document.getElementById('exitAnimalSelect');
-                if (!select) return;
-
-                var presentAnimals = animals.filter(function(a) { return !a.exitDate; });
-                select.innerHTML = '<option value="">Sélectionner</option>';
-                
-                presentAnimals.forEach(function(animal) {
-                    var option = document.createElement('option');
-                    option.value = animal.id;
-                    option.textContent = animal.id + ' - ' + animal.lot;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Erreur liste sortie:', error);
-            }
-        }
-
-        // Actions principales
-        function addAnimal() {
-            try {
-                var id = document.getElementById('inputId').value.trim();
-                var date = document.getElementById('inputDate').value;
-                var breeder = document.getElementById('inputBreeder').value.trim();
-                var sex = document.getElementById('inputSex').value;
-                var lot = document.getElementById('inputLot').value;
-                var location = document.getElementById('inputLocation').value;
-
-                if (!id || !lot || !location) {
-                    showNotification('ID, lot et emplacement obligatoires', 'error');
-                    return;
-                }
-
-                if (currentEditingAnimal) {
-                    // Mode édition
-                    var animalIndex = animals.findIndex(function(a) { return a.id === currentEditingAnimal; });
-                    if (animalIndex !== -1) {
-                        animals[animalIndex].entryDate = date;
-                        animals[animalIndex].breeder = breeder;
-                        animals[animalIndex].sex = sex;
-                        animals[animalIndex].lot = lot;
-                        animals[animalIndex].location = location;
-                        showNotification('Animal modifié', 'success');
-                    }
-                    currentEditingAnimal = null;
-                } else {
-                    // Mode ajout
-                    var existingAnimal = animals.find(function(a) { return a.id === id; });
-                    if (existingAnimal) {
-                        showNotification('ID déjà existant', 'error');
-                        return;
-                    }
-
-                    animals.push({
-                        id: id,
-                        entryDate: date,
-                        breeder: breeder,
-                        sex: sex,
-                        lot: lot,
-                        location: location
-                    });
-                    showNotification('Animal ajouté', 'success');
-                }
-                
-                closeAddModal();
-                updateDisplay();
-                saveData();
-            } catch (error) {
-                console.error('Erreur ajout:', error);
-                showNotification('Erreur ajout', 'error');
-            }
-        }
-
-        function processExit() {
-            try {
-                var animalId = document.getElementById('exitAnimalSelect').value;
-                var exitDate = document.getElementById('exitDate').value;
-                var exitReason = document.getElementById('exitReason').value;
-
-                if (!animalId || !exitDate || !exitReason) {
-                    showNotification('Tous les champs obligatoires', 'error');
-                    return;
-                }
-
-                var animalIndex = animals.findIndex(function(a) { return a.id === animalId; });
-                if (animalIndex !== -1) {
-                    animals[animalIndex].exitDate = exitDate;
-                    animals[animalIndex].exitReason = exitReason;
-                    
-                    closeExitModal();
-                    updateDisplay();
-                    saveData();
-                    showNotification('Sortie enregistrée', 'success');
-                }
-            } catch (error) {
-                console.error('Erreur sortie:', error);
-                showNotification('Erreur sortie', 'error');
-            }
-        }
-
-        function importAnimals() {
-            try {
-                animals = sampleAnimals.slice();
-                updateDisplay();
-                saveData();
-                showNotification(sampleAnimals.length + ' animaux importés', 'success');
-            } catch (error) {
-                console.error('Erreur import animaux:', error);
-                showNotification('Erreur import', 'error');
-            }
-        }
-
-        function exportCSV() {
-            try {
-                if (animals.length === 0) {
-                    showNotification('Aucune donnée à exporter', 'error');
-                    return;
-                }
-
-                var headers = ['ID', 'Date_Entree', 'Sexe', 'Lot', 'Eleveur', 'Emplacement', 'Statut'];
-                var csv = headers.join(',') + '\n';
-                
-                animals.forEach(function(animal) {
-                    var row = [
-                        animal.id,
-                        animal.entryDate || '',
-                        animal.sex || '',
-                        animal.lot || '',
-                        animal.breeder || '',
-                        animal.location || '',
-                        animal.exitDate ? 'Sorti' : 'Present'
-                    ];
-                    csv += row.join(',') + '\n';
-                });
-
-                var blob = new Blob([csv], { type: 'text/csv' });
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = 'gestion_cheptel_' + new Date().toISOString().slice(0,10) + '.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showNotification('Export réussi', 'success');
-            } catch (error) {
-                console.error('Erreur export:', error);
-                showNotification('Erreur export', 'error');
-            }
-        }
-
-        // Affichage et mise à jour
-        function updateDisplay() {
-            try {
-                updateTotalCount();
-                
-                if (currentView === 'inventory') {
-                    updateInventoryView();
-                } else if (currentView === 'stats') {
-                    updateStatsView();
-                }
-            } catch (error) {
-                console.error('Erreur affichage:', error);
-            }
-        }
-
-        function updateTotalCount() {
-            try {
-                var present = animals.filter(function(a) { return !a.exitDate; }).length;
-                var element = document.getElementById('totalCount');
-                if (element) element.textContent = present;
-            } catch (error) {
-                console.error('Erreur compteur:', error);
-            }
-        }
-
-        function updateInventoryView() {
-            try {
-                var searchTerm = (document.getElementById('searchInput').value || '').toLowerCase();
-                var filteredAnimals = animals.filter(function(animal) {
-                    if (!searchTerm) return true;
-                    return animal.id.toLowerCase().includes(searchTerm) ||
-                           (animal.lot && animal.lot.toLowerCase().includes(searchTerm)) ||
-                           (animal.location && animal.location.toLowerCase().includes(searchTerm)) ||
-                           (animal.breeder && animal.breeder.toLowerCase().includes(searchTerm));
-                });
-
-                var container = document.getElementById('animals-container');
-                var empty = document.getElementById('empty-inventory');
-                
-                if (!container || !empty) return;
-
-                if (filteredAnimals.length === 0 && animals.length === 0) {
-                    container.innerHTML = '';
-                    empty.classList.remove('hidden');
-                } else {
-                    empty.classList.add('hidden');
-                    container.innerHTML = filteredAnimals.map(function(animal) {
-                        var sexBadge = animal.sex ? 
-                            '<div class="sex-badge ' + (animal.sex === 'Mâle' ? 'sex-male' : 'sex-female') + '">' +
-                                (animal.sex === 'Mâle' ? '♂' : '♀') +
-                            '</div>' : '';
-                        
-                        var exitBadge = animal.exitDate ? 
-                            '<div class="exit-badge">Sorti - ' + animal.exitReason + '</div>' : '';
-                        
-                        var exitClass = animal.exitDate ? ' exited' : '';
-                        
-                        return '<div class="animal-card' + exitClass + '">' +
-                            '<div class="animal-header">' +
-                                '<div>' +
-                                    '<div class="animal-id">' + animal.id + '</div>' +
-                                    '<div class="animal-lot">' + (animal.lot || '') + '</div>' +
-                                    exitBadge +
-                                '</div>' +
-                                '<div style="display: flex; gap: 6px; align-items: center;">' +
-                                    sexBadge +
-                                    (!animal.exitDate ? '<button onclick="editAnimal(\'' + animal.id + '\')" class="btn btn-secondary btn-small">✏️</button>' : '') +
-                                '</div>' +
-                            '</div>' +
-                            '<div class="animal-details">' +
-                                '<div class="detail-item">' +
-                                    '<div class="detail-label">Emplacement</div>' +
-                                    '<div class="detail-value">' + (animal.location || '') + '</div>' +
-                                '</div>' +
-                                '<div class="detail-item">' +
-                                    '<div class="detail-label">Entrée</div>' +
-                                    '<div class="detail-value">' + (animal.entryDate || 'Non renseigné') + '</div>' +
-                                '</div>' +
-                                (animal.breeder ? 
-                                    '<div class="detail-item" style="grid-column: 1 / -1;">' +
-                                        '<div class="detail-label">Éleveur</div>' +
-                                        '<div class="detail-value">' + animal.breeder + '</div>' +
-                                    '</div>' : '') +
-                                (animal.exitDate ? 
-                                    '<div class="detail-item">' +
-                                        '<div class="detail-label">Sortie</div>' +
-                                        '<div class="detail-value" style="color: #dc2626;">' + animal.exitDate + '</div>' +
-                                    '</div>' : '') +
-                            '</div>' +
-                        '</div>';
-                    }).join('');
-                }
-            } catch (error) {
-                console.error('Erreur inventory view:', error);
-            }
-        }
-
-        function updateStatsView() {
-            try {
-                var total = animals.length;
-                var present = animals.filter(function(a) { return !a.exitDate; }).length;
-                var exited = total - present;
-                var males = animals.filter(function(a) { return a.sex === 'Mâle' && !a.exitDate; }).length;
-                var females = animals.filter(function(a) { return a.sex === 'Femelle' && !a.exitDate; }).length;
-
-                document.getElementById('stat-total').textContent = total;
-                document.getElementById('stat-present').textContent = present;
-                document.getElementById('stat-exited').textContent = exited;
-                document.getElementById('stat-males').textContent = males;
-                document.getElementById('stat-females').textContent = females;
-
-                // Répartition par lot
-                var lots = {};
-                animals.filter(function(a) { return !a.exitDate; }).forEach(function(animal) {
-                    if (animal.lot) {
-                        lots[animal.lot] = (lots[animal.lot] || 0) + 1;
-                    }
-                });
-
-                var lotsContainer = document.getElementById('lots-breakdown');
-                if (lotsContainer) {
-                    if (Object.keys(lots).length === 0) {
-                        lotsContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune donnée</p>';
-                    } else {
-                        lotsContainer.innerHTML = Object.keys(lots).map(function(lot) {
-                            return '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">' +
-                                '<span>' + lot + '</span>' +
-                                '<span style="font-weight: 700; color: #2563eb;">' + lots[lot] + '</span>' +
-                            '</div>';
-                        }).join('');
-                    }
-                }
-
-                // Causes de sortie
-                var exitReasons = {};
-                animals.filter(function(a) { return a.exitDate; }).forEach(function(animal) {
-                    if (animal.exitReason) {
-                        exitReasons[animal.exitReason] = (exitReasons[animal.exitReason] || 0) + 1;
-                    }
-                });
-
-                var exitContainer = document.getElementById('exit-reasons');
-                if (exitContainer) {
-                    if (Object.keys(exitReasons).length === 0) {
-                        exitContainer.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">Aucune sortie enregistrée</p>';
-                    } else {
-                        exitContainer.innerHTML = Object.keys(exitReasons).map(function(reason) {
-                            return '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">' +
-                                '<span>' + reason + '</span>' +
-                                '<span style="font-weight: 700; color: #dc2626;">' + exitReasons[reason] + '</span>' +
-                            '</div>';
-                        }).join('');
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur stats view:', error);
-            }
-        }
-
-        // Sauvegarde et chargement des données
-        function saveData() {
-            try {
-                localStorage.setItem('cheptel_animals', JSON.stringify(animals));
-            } catch (error) {
-                console.error('Erreur sauvegarde:', error);
-            }
-        }
-
-        function loadData() {
-            try {
-                var savedAnimals = localStorage.getItem('cheptel_animals');
-                if (savedAnimals) {
-                    animals = JSON.parse(savedAnimals);
-                }
-            } catch (error) {
-                console.error('Erreur chargement:', error);
-                animals = [];
-            }
-        }
-
-        // Gestion des clics en dehors des modales
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) {
-                closeAddModal();
-                closeExitModal();
-            }
-        });
-
-        // Gestion de la touche Échap
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeAddModal();
-                closeExitModal();
-            }
-        });
-    </script>
-</body>
-</html>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-
