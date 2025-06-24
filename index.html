@@ -492,21 +492,152 @@
             <!-- Vue Stats -->
             <div id="view-stats" class="hidden">
                 <div class="card">
-                    <h2 style="color: #2563eb; margin-bottom: 8px; font-size: 18px; font-weight: 700;">📈 Statistiques</h2>
+                    <h2 style="color: #2563eb; margin-bottom: 8px; font-size: 18px; font-weight: 700;">📈 Statistiques Avancées</h2>
+                    <p style="color: #64748b; font-size: 13px;">Analyses détaillées et indicateurs de performance</p>
                 </div>
                 
-                <div class="stats-grid">
-                    <div class="stats-card">
-                        <div class="stats-number text-blue" id="stat-total">0</div>
-                        <div class="stats-label">Total</div>
+                <!-- Statistiques Générales -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">📊 Vue d'ensemble</h3>
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <div class="stats-number text-blue" id="stat-total">0</div>
+                            <div class="stats-label">Total Animaux</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-green" id="stat-present">0</div>
+                            <div class="stats-label">Présents</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-purple" id="stat-density">0</div>
+                            <div class="stats-label">Densité/Emplacement</div>
+                        </div>
                     </div>
-                    <div class="stats-card">
-                        <div class="stats-number text-green" id="stat-present">0</div>
-                        <div class="stats-label">Présents</div>
+                </div>
+
+                <!-- Répartition par Sexe -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">⚥ Répartition par Sexe</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div class="stats-card">
+                            <div class="stats-number text-blue" id="stat-males">0</div>
+                            <div class="stats-label">Mâles</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-purple" id="stat-females">0</div>
+                            <div class="stats-label">Femelles</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-green" id="stat-sex-ratio">0%</div>
+                            <div class="stats-label">Ratio M/F</div>
+                        </div>
                     </div>
-                    <div class="stats-card">
-                        <div class="stats-number text-red" id="stat-exited">0</div>
-                        <div class="stats-label">Sortis</div>
+                </div>
+
+                <!-- Analyse par Lots -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">📦 Répartition par Lot</h3>
+                    <div id="lots-breakdown"></div>
+                    <div style="margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Lot le plus peuplé :</div>
+                        <div style="font-weight: 700; color: #2563eb;" id="lot-max">-</div>
+                    </div>
+                </div>
+
+                <!-- Analyse par Emplacements -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">🏠 Occupation par Emplacement</h3>
+                    <div id="locations-breakdown"></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                        <div style="padding: 12px; background: #f0fdf4; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #166534; margin-bottom: 4px;">Plus occupé :</div>
+                            <div style="font-weight: 700; color: #059669;" id="location-max">-</div>
+                        </div>
+                        <div style="padding: 12px; background: #fef2f2; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #991b1b; margin-bottom: 4px;">Moins occupé :</div>
+                            <div style="font-weight: 700; color: #dc2626;" id="location-min">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyse des Ages -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">🎂 Analyse des Âges</h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px;">
+                        <div class="stats-card">
+                            <div class="stats-number text-green" id="age-0-6months">0</div>
+                            <div class="stats-label">0-6 mois</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-blue" id="age-6-12months">0</div>
+                            <div class="stats-label">6-12 mois</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-purple" id="age-1-2years">0</div>
+                            <div class="stats-label">1-2 ans</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-red" id="age-2plus">0</div>
+                            <div class="stats-label">2+ ans</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: #fffbeb; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #92400e; margin-bottom: 4px;">Âge moyen :</div>
+                        <div style="font-weight: 700; color: #d97706;" id="age-average">- mois</div>
+                    </div>
+                </div>
+
+                <!-- Activité Recent -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">📅 Activité Récente (7 derniers jours)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div class="stats-card">
+                            <div class="stats-number text-green" id="recent-entries">0</div>
+                            <div class="stats-label">Nouvelles Entrées</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-blue" id="recent-feeding">0</div>
+                            <div class="stats-label">Records Nutrition</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyse Nutrition -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">🌾 Analyse Nutrition (30 derniers jours)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div class="stats-card">
+                            <div class="stats-number text-green" id="nutrition-total-hay">0</div>
+                            <div class="stats-label">Bottes Foin</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-blue" id="nutrition-total-feed">0</div>
+                            <div class="stats-label">Kg Aliment</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-number text-purple" id="nutrition-avg-daily">0</div>
+                            <div class="stats-label">Moy/Jour (kg)</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: #f0fdf4; border-radius: 8px;">
+                        <div style="font-size: 12px; color: #166534; margin-bottom: 4px;">Consommation par animal :</div>
+                        <div style="font-weight: 700; color: #059669;" id="nutrition-per-animal">- kg/animal/jour</div>
+                    </div>
+                </div>
+
+                <!-- Alertes et Recommandations -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">⚠️ Alertes et Recommandations</h3>
+                    <div id="alerts-container">
+                        <!-- Les alertes seront générées dynamiquement -->
+                    </div>
+                </div>
+
+                <!-- Tendances -->
+                <div class="card">
+                    <h3 style="color: #1e293b; margin-bottom: 12px; font-size: 16px; font-weight: 700;">📈 Tendances</h3>
+                    <div id="trends-container">
+                        <!-- Les tendances seront générées dynamiquement -->
                     </div>
                 </div>
             </div>
