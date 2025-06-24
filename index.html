@@ -476,6 +476,7 @@
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="openFeedingModal()">✚ Nouvelle Ration</button>
                         <button class="btn btn-success" onclick="importSampleFeeding()">⬇ Import Exemples</button>
+                        <button class="btn btn-warning" onclick="exportFeeding()">⬆ Export Nutrition</button>
                     </div>
                 </div>
                 
@@ -675,6 +676,64 @@
                 console.error('❌ Erreur sauvegarde:', error);
                 showNotification('Erreur de sauvegarde!', 'error');
                 return false;
+            }
+        }
+
+        // EXPORT NUTRITION CSV
+        function exportFeeding() {
+            console.log('📤 Export Nutrition CSV...');
+            try {
+                if (feedingRecords.length === 0) {
+                    showNotification('❌ Aucune donnée nutrition à exporter!', 'error');
+                    return;
+                }
+
+                // En-têtes avec espaces et caractères français
+                const headers = [
+                    'Date Distribution',
+                    'Emplacement', 
+                    'Foin (bottes)',
+                    'Aliment (kg)',
+                    'Date Création'
+                ];
+                
+                // Créer le CSV avec séparateur point-virgule
+                let csv = headers.join(';') + '\n';
+                
+                // Trier par date décroissante
+                const sortedRecords = feedingRecords.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedRecords.forEach(record => {
+                    const row = [
+                        record.date || '',
+                        `"${record.location || ''}"`,
+                        record.hay || '0',
+                        record.feed || '0',
+                        record.createdAt ? new Date(record.createdAt).toLocaleDateString('fr-FR') : ''
+                    ];
+                    csv += row.join(';') + '\n';
+                });
+
+                // Ajouter BOM pour Excel français
+                const BOM = '\uFEFF';
+                const csvWithBOM = BOM + csv;
+
+                const blob = new Blob([csvWithBOM], { 
+                    type: 'text/csv;charset=utf-8;' 
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `OS_Pecura_Nutrition_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('✅ Export nutrition réussi!', 'success');
+            } catch (error) {
+                console.error('❌ Erreur export nutrition:', error);
+                showNotification('❌ Erreur export nutrition', 'error');
             }
         }
 
@@ -941,33 +1000,52 @@
                     return;
                 }
 
-                const headers = ['ID', 'Date_Entree', 'Date_Naissance', 'Sexe', 'Lot', 'Eleveur', 'Emplacement'];
-                let csv = headers.join(',') + '\n';
+                // En-têtes avec espaces et caractères français
+                const headers = [
+                    'ID Animal',
+                    'Date Entrée', 
+                    'Date Naissance',
+                    'Sexe',
+                    'Lot',
+                    'Nom Éleveur',
+                    'Emplacement',
+                    'Statut'
+                ];
+                
+                // Créer le CSV avec séparateur point-virgule pour Excel français
+                let csv = headers.join(';') + '\n';
                 
                 animals.forEach(animal => {
                     const row = [
-                        animal.id,
+                        animal.id || '',
                         animal.entryDate || '',
                         animal.birthDate || '',
                         animal.sex || '',
-                        animal.lot || '',
-                        animal.breeder || '',
-                        animal.location || ''
+                        `"${animal.lot || ''}"`,  // Guillemets pour les espaces
+                        `"${animal.breeder || ''}"`,  // Guillemets pour les noms
+                        `"${animal.location || ''}"`,  // Guillemets pour les espaces
+                        animal.exitDate ? 'Sorti' : 'Présent'
                     ];
-                    csv += row.join(',') + '\n';
+                    csv += row.join(';') + '\n';
                 });
 
-                const blob = new Blob([csv], { type: 'text/csv' });
+                // Ajouter BOM pour caractères français dans Excel
+                const BOM = '\uFEFF';
+                const csvWithBOM = BOM + csv;
+
+                const blob = new Blob([csvWithBOM], { 
+                    type: 'text/csv;charset=utf-8;' 
+                });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `ospecura_export_${new Date().toISOString().slice(0,10)}.csv`;
+                a.download = `OS_Pecura_Export_${new Date().toISOString().slice(0,10)}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                showNotification('✅ Export réussi!', 'success');
+                showNotification('✅ Export réussi! Fichier téléchargé', 'success');
             } catch (error) {
                 console.error('❌ Erreur export:', error);
                 showNotification('❌ Erreur export', 'error');
